@@ -1,17 +1,17 @@
 import { Helmet } from 'react-helmet-async';
 
-import { AppView } from 'src/sections/overview/view';
+import { StatsView } from 'src/sections/overview/view';
 
 // ----------------------------------------------------------------------
 
-export default function AppPage() {
+export default function AdminStatsPage() {
   return (
     <>
       <Helmet>
         <title> Dashboard | Minimal UI </title>
       </Helmet>
 
-      <AppView />
+      <StatsView />
     </>
   );
 }
