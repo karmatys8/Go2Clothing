@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
@@ -8,14 +6,13 @@ import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { alpha, useTheme } from '@mui/material/styles';
-import InputAdornment from '@mui/material/InputAdornment';
 
 import { useRouter } from 'src/routes/hooks';
 
 import { bgGradient } from 'src/theme/css';
+import PasswordTextField from 'src/layouts/dashboard/common/password-text-field';
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
@@ -27,8 +24,6 @@ export default function LoginView() {
 
   const router = useRouter();
 
-  const [showPassword, setShowPassword] = useState(false);
-
   const handleClick = () => {
     router.push('/dashboard');
   };
@@ -38,20 +33,7 @@ export default function LoginView() {
       <Stack spacing={3}>
         <TextField name="email" label="Email address" />
 
-        <TextField
-          name="password"
-          label="Password"
-          type={showPassword ? 'text' : 'password'}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                  <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
+        <PasswordTextField name="password" label="Password" />
       </Stack>
 
       <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ my: 3 }}>
