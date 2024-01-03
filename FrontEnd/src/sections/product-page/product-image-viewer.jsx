@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import ImageList from '@mui/material/ImageList';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -7,17 +7,25 @@ import ImageListItem from '@mui/material/ImageListItem';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
+import useFade from 'src/hooks/use-fade';
+
 export default function ProductImages() {
   const [itemImages] = useState(itemData);
   const [imageIndex, setImageIndex] = useState(0);
+  const [isVisible, setIsVisible, fadeProps] = useFade();
 
   const handleImageChange = (id) => {
+    setIsVisible(false);
     setImageIndex(id);
   };
 
+  useEffect(() => {
+    setIsVisible(true);
+  }, [imageIndex, setIsVisible])
+
   return (
-    <Grid container>
-      <Grid item xs={1}>
+    <Grid container sx={{ mb: 5 }}>
+      <Grid item xs={0} sm={2}>
         <ImageList sx={{ height: 450, m: 0 }} cols={1} gap={10} m={0}>
           {itemImages.map((item) => (
             <ImageListItem onClick={() => handleImageChange(item.id)} key={item.id}>
@@ -31,18 +39,16 @@ export default function ProductImages() {
           ))}
         </ImageList>
       </Grid>
-      <Grid item container alignContent="center" xs={11} style={{ position: 'relative' }}>
+      <Grid item container alignContent="center" xs={12} sm={10} style={{ position: 'relative' }}>
         <IconButton
-          onClick={() => handleImageChange((imageIndex - 1) % itemImages.length)}
+          onClick={() =>
+            handleImageChange((imageIndex - 1 + itemImages.length) % itemImages.length)
+          }
           style={{ position: 'absolute', top: '50%' }}
         >
           <ArrowBackIosIcon />
         </IconButton>
-        <img
-          src={itemImages.find((item) => item.id === imageIndex).img}
-          alt="Product"
-          height={450}
-        />
+        {isVisible && <img src={itemImages[imageIndex]?.img} alt="Product" height={450} {...fadeProps}/>}
         <IconButton
           onClick={() => handleImageChange((imageIndex + 1) % itemImages.length)}
           style={{ position: 'absolute', top: '50%', right: 0 }}
