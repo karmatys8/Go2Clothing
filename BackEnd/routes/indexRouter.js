@@ -1,14 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const adminsRouter = require('./adminsRouter');
+const sql = require('mssql');
+const dbConfig = require("./db");
 
-router.use('/admin', adminsRouter);
 
-router.get('/', (req, res, next) => {});
-
-router.get('/:value', (req, res, next) => {
-    const value = req.params.value;
+router.get('/', (req, res) => {
+  res.send("Main Page");
 });
 
-router.post('/', (req, res, next) => {});
 module.exports = router;

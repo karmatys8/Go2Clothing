@@ -5,8 +5,9 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const bodyParser = require('body-parser');
 
-var indexRouter = require('./routes/index');
+var indexRouter = require('./routes/indexRouter');
 var adminsRouter = require('./routes/adminsRouter');
+var productsRouter = require('./routes/productsRouter');
 
 var app = express();
 
@@ -24,6 +25,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/', indexRouter);
 app.use('/admin', adminsRouter);
+app.use('/products', productsRouter);
 
 app.use(function(req, res, next) {
   next(createError(404));
@@ -44,10 +46,10 @@ const dbConfig = require('./routes/db');
 
 sql.connect(dbConfig, (err) => {
   if (err) {
-    console.error('Błąd połączenia z bazą danych:', err);
+    console.error('Data download error:', err);
     return;
   }
-  console.log('Połączenie z bazą danych zostało nawiązane.');
+  console.log('The connection to the database has been established.');
 });
 
 
