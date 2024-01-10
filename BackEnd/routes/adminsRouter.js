@@ -4,7 +4,7 @@ const sql = require('mssql');
 const dbConfig = require("./db");
 
 router.get('/', (req, res) => {
-    res.send("Strona Główna dla admina");
+    res.send("Admins main page");
 });
 
 router.get('/customers', async (req, res) => {
@@ -15,16 +15,16 @@ router.get('/customers', async (req, res) => {
 
         const formattedData = result.recordset.map(data => `
       <div>
-        <h3>Imię i Nazwisko: ${data.FirstName} ${data.LastName}</h3>
+        <h3>Name: ${data.FirstName} ${data.LastName}</h3>
         <p>Login: ${data.Login}</p>
-        <p>Hasło: ####### </p>
+        <p>Password: ####### </p>
       </div>
     `);
 
         res.status(200).send(formattedData.join(''));
 
     } catch (err) {
-        console.error('Błąd pobierania danych:', err);
+        console.error('Data download error:', err);
         res.status(500).send(err.message);
     }
 });
@@ -40,14 +40,34 @@ router.post('/addProduct', async (req, res) => {
         `;
 
         if (result.rowsAffected && result.rowsAffected[0] > 0) {
-            res.status(201).send('Produkt został dodany pomyślnie.');
+            res.status(201).send('The product has been added successfully.');
         } else {
-            res.status(500).send('Wystąpił błąd podczas dodawania produktu.');
+            res.status(500).send('An error occurred while adding the product.');
         }
 
     } catch (err) {
-        console.error('Błąd podczas dodawania produktu:', err);
-        res.status(500).send('Wystąpił błąd podczas dodawania produktu: ' + err.message);
+        console.error('Error adding product:', err);
+        res.status(500).send('An error occurred while adding the product:' + err.message);
+    }
+});
+
+router.delete('/deleteProduct/:id', async (req, res) => {
+    try {
+        const pool = await sql.connect(dbConfig);
+
+        const result = await sql.query`
+            Delete from Products where ProductID=${req.params.id}
+        `;
+
+        if (result.rowsAffected && result.rowsAffected[0] > 0) {
+            res.status(201).send('The product has been deleted successfully.');
+        } else {
+            res.status(500).send('An error occurred while deleting the product.');
+        }
+
+    } catch (err) {
+        console.error('Error deleting product:', err);
+        res.status(500).send('An error occurred while deleting the product:' + err.message);
     }
 });
 
