@@ -1,3 +1,5 @@
+import React, {useState} from "react";
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -19,23 +21,49 @@ export default function RegisterView() {
   const theme = useTheme();
 
   const router = useRouter();
+  const [registerData, setRegisterData] = useState({ firstName: '', lastName: '',
+                                                        email: '', password: '' ,confirmPassword: ''});
 
-  const handleClick = () => {
-    router.push('/dashboard');
+
+  const handleInputChange = event => {
+      const { name, value } = event.target;
+      setRegisterData(prevData => ({
+          ...prevData,
+          [name]: value
+      }));
+  };
+
+    const handleClick = async () => {
+      console.log(registerData);
+      try {
+          const response = await fetch('http://localhost:3000/users/register', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(registerData)
+          });
+          if(response.ok){
+              const responseData = await response.json();
+              router.push('/login');
+          }
+      } catch (error) {
+          console.error('Network error:', error.message);
+      }
   };
 
   const renderForm = (
     <>
       <Stack spacing={3}>
-        <TextField name="firstName" label="First name" />
+        <TextField name="firstName" label="First name" onChange={handleInputChange}/>
         
-        <TextField name="lastName" label="Last name" />
+        <TextField name="lastName" label="Last name" onChange={handleInputChange} />
 
-        <TextField name="email" label="Email address" />
+        <TextField name="email" label="Email address" onChange={handleInputChange}/>
 
-        <PasswordTextField name="password" label="Password" />
+        <TextField name="password" label="Password" onChange={handleInputChange} />
 
-        <PasswordTextField name="confirmPassword" label="Confirm password" />
+        <TextField name="confirmPassword" label="Confirm password" onChange={handleInputChange} />
       </Stack>
 
       <LoadingButton
