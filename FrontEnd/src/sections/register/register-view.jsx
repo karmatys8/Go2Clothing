@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -24,18 +26,25 @@ export default function RegisterView() {
     router.push('/dashboard');
   };
 
+  const [password, setPassword] = useState('');
+  const [passwordConfirmation, setPasswordConfirmation] = useState('');
+
   const renderForm = (
     <>
       <Stack spacing={3}>
         <TextField name="firstName" label="First name" />
-        
+
         <TextField name="lastName" label="Last name" />
 
         <TextField name="email" label="Email address" />
 
-        <PasswordTextField name="password" label="Password" />
+        <PasswordTextField name="password" label="Password" setState={setPassword} />
 
-        <PasswordTextField name="confirmPassword" label="Confirm password" />
+        <PasswordTextField
+          name="confirmPassword"
+          label="Confirm password"
+          setState={setPasswordConfirmation}
+        />
       </Stack>
 
       <LoadingButton
@@ -81,8 +90,6 @@ export default function RegisterView() {
           <Typography variant="h4" sx={{ mb: 5 }}>
             Register to Minimal
           </Typography>
-
-      
 
           <Divider sx={{ my: 3 }} />
 
