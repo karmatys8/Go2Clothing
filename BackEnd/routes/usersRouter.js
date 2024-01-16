@@ -72,15 +72,15 @@ router.post('/register', async (req, res) => {
     const { firstName, lastName, email, password, confirmPassword } = req.body;
 
     if (!validator.isEmail(email)) {
-        return res.status(400).json({ error: 'Invalid email address.' });
+        return res.status(401).json({ error: 'Invalid email address.' });
     }
 
     if (!validateName(firstName) || !validateName(lastName)) {
-        return res.status(400).json({ error: 'Name and Surname cannot be empty or contain numbers.' });
+        return res.status(402).json({ error: 'Name and Surname cannot be empty or contain numbers.' });
     }
 
     if (password !== confirmPassword) {
-        return res.status(400).json({ error: 'Password and confirmed password must be the same.' });
+        return res.status(403).json({ error: 'Password and confirmed password must be the same.' });
     }
 
 

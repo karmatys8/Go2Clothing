@@ -33,7 +33,7 @@ export default function RegisterView() {
       }));
   };
 
-    const handleClick = async () => {
+  const handleClick = async () => {
       console.log(registerData);
       try {
           const response = await fetch('http://localhost:3000/users/register', {
