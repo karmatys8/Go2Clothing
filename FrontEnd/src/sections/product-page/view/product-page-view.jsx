@@ -4,6 +4,7 @@ import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import ProductInfo from '../product-info';
 import ProductImages from '../product-image-viewer';
 import ProductPersonalization from '../product-personalization';
+import ProductRecommendations from '../product-recommendations';
 
 // ----------------------------------------------------------------------
 
@@ -12,8 +13,6 @@ export default function SingleProductView() {
     <Container>
       <Grid container sx={{ mb: 25 }}>
         <Grid item xs={12} md={8}>
-          <ProductImages />
-          <ProductImages />
           <ProductImages />
         </Grid>
         <Grid
@@ -28,14 +27,7 @@ export default function SingleProductView() {
         </Grid>
       </Grid>
 
-      <ProductImages />
-      <ProductImages />
-      <ProductImages />
-      <ProductImages />
-      <ProductImages />
-      <ProductImages />
-      <ProductImages />
-      <ProductImages />
+      <ProductRecommendations />
     </Container>
   );
 }
