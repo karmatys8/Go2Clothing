@@ -12,10 +12,10 @@ import { alpha, useTheme } from '@mui/material/styles';
 import { useRouter } from 'src/routes/hooks';
 
 import { bgGradient } from 'src/theme/css';
-import PasswordTextField from 'src/layouts/dashboard/common/password-text-field';
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
+import PasswordTextField from 'src/components/password-text-field';
 
 // ----------------------------------------------------------------------
 

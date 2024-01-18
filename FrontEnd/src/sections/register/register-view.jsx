@@ -10,9 +10,9 @@ import { alpha, useTheme } from '@mui/material/styles';
 import { useRouter } from 'src/routes/hooks';
 
 import { bgGradient } from 'src/theme/css';
-import PasswordTextField from 'src/layouts/dashboard/common/password-text-field';
 
 import Logo from 'src/components/logo';
+import PasswordTextField from 'src/components/password-text-field';
 // ----------------------------------------------------------------------
 
 export default function RegisterView() {
@@ -28,7 +28,7 @@ export default function RegisterView() {
     <>
       <Stack spacing={3}>
         <TextField name="firstName" label="First name" />
-        
+
         <TextField name="lastName" label="Last name" />
 
         <TextField name="email" label="Email address" />
@@ -81,8 +81,6 @@ export default function RegisterView() {
           <Typography variant="h4" sx={{ mb: 5 }}>
             Register to Minimal
           </Typography>
-
-      
 
           <Divider sx={{ my: 3 }} />
 

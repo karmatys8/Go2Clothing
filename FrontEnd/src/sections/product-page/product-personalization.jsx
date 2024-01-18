@@ -17,23 +17,75 @@ export default function ProductPersonalization() {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const [selectedColor, setSelectedColor] = useState('Light Red');
-  const [selectedSeize, setSelectedSeize] = useState('');
+  const [selectedSizes, setSelectedSizes] = useState('');
 
-  const handleColorChange = (event) => {
+  const handleChangeColor = (event) => {
     setSelectedColor(event.target.value);
   };
 
   const controlProps = (item) => ({
     checked: selectedColor === item,
-    onChange: handleColorChange,
+    onChange: handleChangeColor,
     value: item,
     name: 'color-radio-button-demo',
     inputProps: { 'aria-label': item },
   });
 
   const handleSeizeChange = (event) => {
-    setSelectedSeize(event.target.value);
+    setSelectedSizes(event.target.value);
   };
+
+  const renderColorPicker = (
+    <>
+      <Typography variant="subtitle2" component="h5">{`Color - ${selectedColor}`}</Typography>
+      <Box sx={{ ml: -1 }}>
+        {colorData.map((colorItem) => (
+          <Radio
+            {...controlProps(`${colorItem.colorName}`)}
+            sx={{
+              color: colorItem.colorHex,
+              '&.Mui-checked': {
+                color: colorItem.colorHex,
+              },
+            }}
+            key={colorItem.id}
+            title={colorItem.colorName}
+          />
+        ))}
+      </Box>
+    </>
+  );
+
+  const renderSizePicker = (
+    <>
+      <Typography variant="subtitle2" component="h5" sx={{ mb: 1 }}>
+        View size guide
+      </Typography>
+      <FormControl sx={{ minWidth: 130, mb: 2 }}>
+        <InputLabel id="seize-select-label">Select size</InputLabel>
+        <Select
+          labelId="seize-select-label"
+          id="seize-select"
+          value={selectedSizes}
+          label="Select size"
+          onChange={handleSeizeChange}
+          MenuProps={{
+            PaperProps: {
+              style: {
+                maxHeight: 300,
+              },
+            },
+          }}
+        >
+          {seizesData.map((seize) => (
+            <MenuItem value={seize} key={seize}>
+              {seize}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </>
+  );
 
   return (
     <Grid
@@ -48,61 +100,21 @@ export default function ProductPersonalization() {
       }}
     >
       <Grid item xs={12}>
-        <Typography variant="h6" sx={{ mb: 0.5 }}>
+        <Typography variant="h6" component="h2" sx={{ mb: 0.5 }}>
           Product Name
         </Typography>
       </Grid>
       <Grid item xs={12}>
-        <Typography variant="h6" sx={{ mb: 3 }}>
+        <Typography variant="h6" component="subtitle1" sx={{ mb: 3 }}>
           Price
         </Typography>
       </Grid>
 
       <Grid item xs={6} md={12} sx={{ mb: 2.5 }} flex justifyContent="center">
-        <Typography variant="subtitle2">{`Color - ${selectedColor}`}</Typography>
-        <Box sx={{ ml: -1 }}>
-          {colorData.map((colorItem) => (
-            <Radio
-              {...controlProps(`${colorItem.colorName}`)}
-              sx={{
-                color: colorItem.colorHex,
-                '&.Mui-checked': {
-                  color: colorItem.colorHex,
-                },
-              }}
-              key={colorItem.id}
-              title={colorItem.colorName}
-            />
-          ))}
-        </Box>
+        {renderColorPicker}
       </Grid>
       <Grid item xs={6} md={12}>
-        <Typography variant="subtitle2" sx={{ mb: 1 }}>
-          View size guide
-        </Typography>
-        <FormControl sx={{ minWidth: 130, mb: 2 }}>
-          <InputLabel id="seize-select-label">Select size</InputLabel>
-          <Select
-            labelId="seize-select-label"
-            id="seize-select"
-            value={selectedSeize}
-            label="Select size"
-            onChange={handleSeizeChange}
-            MenuProps={{
-              PaperProps: {
-                style: {
-                  maxHeight: 300,
-                },
-              },
-            }}
-          >
-            {seizesData.map((seize) => (
-              <MenuItem value={seize} key={seize}>
-                {seize}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        {renderSizePicker}
       </Grid>
       <Grid item xs={12}>
         <Button

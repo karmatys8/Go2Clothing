@@ -8,15 +8,15 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { products } from 'src/_mock/products';
 
-import ProductCard from 'src/sections/products/product-card';
+import ProductCard from 'src/components/product-card';
 
 export default function ProductRecommendations() {
-  const matches = useMediaQuery((theme) => theme.breakpoints.up('md'));
-  const [slicedProducts, setSlicedProducts] = useState([]);
+  const isDesktop = useMediaQuery((theme) => theme.breakpoints.up('md'));
+  const [groupedProducts, setGroupedProducts] = useState([]);
 
   useEffect(() => {
-    setSlicedProducts(chunkArray(products, matches ? 4 : 2));
-  }, [matches]);
+    setGroupedProducts(chunkArray(products, isDesktop ? 4 : 2));
+  }, [isDesktop]);
 
   return (
     <Box>
@@ -30,7 +30,7 @@ export default function ProductRecommendations() {
         navButtonsAlwaysVisible
         cycleNavigation={false}
       >
-        {slicedProducts.map((productList, i) => (
+        {groupedProducts.map((productList, i) => (
           <Grid container spacing={2} key={i}>
             {productList.map((product, idx) => (
               <Grid item xs={6} md={3} key={idx}>
