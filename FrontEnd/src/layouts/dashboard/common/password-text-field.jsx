@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
@@ -11,17 +11,27 @@ import Iconify from 'src/components/iconify';
 
 PasswordTextField.propTypes = {
   name: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired
-}
+  label: PropTypes.string.isRequired,
+  setState: PropTypes.func.isRequired,
+  error: PropTypes.bool,
+  helperText: PropTypes.string,
+};
 
-export default function PasswordTextField({name, label}) {
+export default function PasswordTextField({ name, label, setState, error, helperText }) {
   const [showPassword, setShowPassword] = useState(false);
+
+  const handleChange = (event) => {
+    setState(event.target.value);
+  };
 
   return (
     <TextField
       name={name}
       label={label}
       type={showPassword ? 'text' : 'password'}
+      onChange={handleChange}
+      error={error}
+      helperText={helperText}
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
@@ -32,5 +42,5 @@ export default function PasswordTextField({name, label}) {
         ),
       }}
     />
-  )
+  );
 }

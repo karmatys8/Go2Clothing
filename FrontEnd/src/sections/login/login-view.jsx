@@ -1,17 +1,17 @@
+import React, { useState } from 'react';
+
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { alpha, useTheme } from '@mui/material/styles';
 
-import { useRouter } from 'src/routes/hooks';
-
 import { bgGradient } from 'src/theme/css';
+import EmailTextField from 'src/layouts/dashboard/common/email-text-field';
 import PasswordTextField from 'src/layouts/dashboard/common/password-text-field';
 
 import Logo from 'src/components/logo';
@@ -22,18 +22,33 @@ import Iconify from 'src/components/iconify';
 export default function LoginView() {
   const theme = useTheme();
 
-  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  const handleClick = () => {
-    router.push('/dashboard');
+  const login = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+
+        localStorage.setItem('WDAI_Project_token', data.token);
+      }
+    } catch (error) {
+      console.error('Network error:', error.message);
+    }
   };
 
   const renderForm = (
     <>
       <Stack spacing={3}>
-        <TextField name="email" label="Email address" />
-
-        <PasswordTextField name="password" label="Password" />
+        <EmailTextField email={email} setEmail={setEmail} />
+        <PasswordTextField name="password" label="Password" setState={setPassword} />
       </Stack>
 
       <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ my: 3 }}>
@@ -48,7 +63,7 @@ export default function LoginView() {
         type="submit"
         variant="contained"
         color="inherit"
-        onClick={handleClick}
+        onClick={login}
       >
         Login
       </LoadingButton>
