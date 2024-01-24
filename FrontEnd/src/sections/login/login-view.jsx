@@ -11,6 +11,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import { bgGradient } from 'src/theme/css';
+import { useUserContext } from 'src/contexts/use-user-context';
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
@@ -21,6 +22,7 @@ import PasswordTextField from 'src/components/password-text-field';
 
 export default function LoginView() {
   const theme = useTheme();
+  const { setUserData } = useUserContext();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -38,12 +40,13 @@ export default function LoginView() {
         const data = await response.json();
 
         localStorage.setItem('WDAI_Project_token', data.token);
+        setUserData(data);
       }
     } catch (error) {
       console.error('Network error:', error.message);
     }
   };
-
+  
   const renderForm = (
     <>
       <Stack spacing={3}>
