@@ -12,10 +12,10 @@ import { alpha, useTheme } from '@mui/material/styles';
 import { useRouter } from 'src/routes/hooks';
 
 import { bgGradient } from 'src/theme/css';
-import EmailTextField from 'src/layouts/dashboard/common/email-text-field';
-import PasswordTextField from 'src/layouts/dashboard/common/password-text-field';
 
 import Logo from 'src/components/logo';
+import EmailTextField from 'src/components/email-text-field';
+import PasswordTextField from 'src/components/password-text-field';
 // ----------------------------------------------------------------------
 
 export default function RegisterView() {
