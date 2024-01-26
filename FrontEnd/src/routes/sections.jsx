@@ -3,6 +3,8 @@ import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 
 import DashboardLayout from 'src/layouts/dashboard';
 
+import { PrivateComponent } from './components';
+
 export const AdminStatsPage = lazy(() => import('src/pages/admin-stats'));
 export const UserPage = lazy(() => import('src/pages/user'));
 export const RegisterPage = lazy(() => import('src/pages/register'));
@@ -26,8 +28,8 @@ export default function Router() {
       children: [
         { element: <ProductsPage />, index: true },
         { path: 'product-page', element: <SingleProductPage /> },
-        { path: 'user', element: <UserPage /> },
-        { path: 'stats', element: <AdminStatsPage />},
+        { path: 'user', element: <PrivateComponent component={<UserPage />} allowedRoles={['customer', 'admin']} /> },
+        { path: 'stats', element: <PrivateComponent component={<AdminStatsPage />} allowedRoles={['admin']} />},
       ],
     },
     {

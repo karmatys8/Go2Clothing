@@ -10,6 +10,8 @@ import { products } from 'src/_mock/products';
 
 import ProductCard from 'src/components/product-card';
 
+// ----------------------------------------------------------------------
+
 export default function ProductRecommendations() {
   const isDesktop = useMediaQuery((theme) => theme.breakpoints.up('md'));
   const [groupedProducts, setGroupedProducts] = useState([]);

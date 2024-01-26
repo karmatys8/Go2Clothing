@@ -9,7 +9,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
-import { account } from 'src/_mock/account';
+import { useUserContext } from 'src/contexts/use-user-context';
 
 // ----------------------------------------------------------------------
 
@@ -31,14 +31,22 @@ const MENU_OPTIONS = [
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
-  const [open, setOpen] = useState(null);
+  const [open, setOpen] = useState(false);
+  const { userData, setUserData } = useUserContext();
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
 
   const handleClose = () => {
-    setOpen(null);
+    setOpen(false);
+  };
+
+  const handleLogOut = () => {
+    handleClose();
+
+    localStorage.removeItem('WDAI_Project_token');
+    setUserData({});
   };
 
   return (
@@ -56,16 +64,13 @@ export default function AccountPopover() {
         }}
       >
         <Avatar
-          src={account.photoURL}
-          alt={account.displayName}
+          alt={`${userData?.firstName} ${userData?.lastName}`}
           sx={{
             width: 36,
             height: 36,
             border: (theme) => `solid 2px ${theme.palette.background.default}`,
           }}
-        >
-          {account.displayName.charAt(0).toUpperCase()}
-        </Avatar>
+        />
       </IconButton>
 
       <Popover
@@ -85,10 +90,10 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2 }}>
           <Typography variant="subtitle2" noWrap>
-            {account.displayName}
+            {`${userData?.firstName} ${userData?.lastName}`}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
+            {userData?.email}
           </Typography>
         </Box>
 
@@ -105,7 +110,7 @@ export default function AccountPopover() {
         <MenuItem
           disableRipple
           disableTouchRipple
-          onClick={handleClose}
+          onClick={handleLogOut}
           sx={{ typography: 'body2', color: 'error.main', py: 1.5 }}
         >
           Logout

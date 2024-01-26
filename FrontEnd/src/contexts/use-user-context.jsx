@@ -6,7 +6,7 @@ import { useMemo, useState, useContext, createContext } from 'react';
 const UserContext = createContext();
 
 export const UserContextProvider = ({ children }) => {
-  const [userData, setUserData] = useState();
+  const [userData, setUserData] = useState({});
 
   const contextValue = useMemo(
     () => ({

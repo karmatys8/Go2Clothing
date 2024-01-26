@@ -6,6 +6,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 
+// ----------------------------------------------------------------------
+
 export default function ProductInfo() {
   const [expanded, setExpanded] = React.useState(false);
 
