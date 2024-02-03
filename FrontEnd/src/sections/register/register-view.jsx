@@ -46,8 +46,6 @@ export default function RegisterView() {
         body: JSON.stringify({ ...nameData, email, password, confirmPassword }),
       });
       if (response.ok) {
-        await response.json();
-
         router.push('/login');
       }
     } catch (error) {

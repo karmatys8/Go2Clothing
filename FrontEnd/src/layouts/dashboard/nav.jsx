@@ -15,6 +15,7 @@ import { RouterLink } from 'src/routes/components';
 import { useResponsive } from 'src/hooks/use-responsive';
 
 import { account } from 'src/_mock/account';
+import { useUserContext } from 'src/contexts/use-user-context';
 
 import Logo from 'src/components/logo';
 import Scrollbar from 'src/components/scrollbar';
@@ -26,6 +27,7 @@ import navConfig from './config-navigation';
 
 export default function Nav({ openNav, onCloseNav }) {
   const pathname = usePathname();
+  const { userData } = useUserContext();
 
   const upLg = useResponsive('up', 'lg');
 
@@ -63,9 +65,12 @@ export default function Nav({ openNav, onCloseNav }) {
 
   const renderMenu = (
     <Stack component="nav" spacing={0.5} sx={{ px: 2 }}>
-      {navConfig.map((item) => (
-        <NavItem key={item.title} item={item} />
-      ))}
+      {navConfig.map(
+        (item) =>
+          (item.role === 'all' || item.role.includes(userData?.role)) && (
+            <NavItem key={item.title} item={item} />
+          )
+      )}
     </Stack>
   );
 

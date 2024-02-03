@@ -11,7 +11,7 @@ import ProductRecommendations from '../product-recommendations';
 export default function SingleProductView() {
   return (
     <Container>
-      <Grid container sx={{ mb: 25 }}>
+      <Grid container sx={{ mb: 15 }}>
         <Grid item xs={12} md={8}>
           <ProductImages />
         </Grid>

@@ -1,15 +1,20 @@
 import PropTypes from 'prop-types';
 
 import Box from '@mui/material/Box';
+import { Button } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
+import LoginIcon from '@mui/icons-material/Login';
+
+import { useRouter } from 'src/routes/hooks';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
 import { bgBlur } from 'src/theme/css';
+import { useUserContext } from 'src/contexts/use-user-context';
 
 import Iconify from 'src/components/iconify';
 
@@ -22,9 +27,16 @@ import NotificationsPopover from './common/notifications-popover';
 // ----------------------------------------------------------------------
 
 export default function Header({ onOpenNav }) {
+  const router = useRouter();
+
   const theme = useTheme();
+  const { userData } = useUserContext();
 
   const lgUp = useResponsive('up', 'lg');
+
+  const handleLogin = () => {
+    router.push('/login');
+  };
 
   const renderContent = (
     <>
@@ -38,11 +50,17 @@ export default function Header({ onOpenNav }) {
 
       <Box sx={{ flexGrow: 1 }} />
 
-      <Stack direction="row" alignItems="center" spacing={1}>
-        <LanguagePopover />
-        <NotificationsPopover />
-        <AccountPopover />
-      </Stack>
+      {userData?.role ? (
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <LanguagePopover />
+          <NotificationsPopover />
+          <AccountPopover />
+        </Stack>
+      ) : (
+        <Button onClick={handleLogin} variant="contained" startIcon={<LoginIcon />}>
+          Log in
+        </Button>
+      )}
     </>
   );
 

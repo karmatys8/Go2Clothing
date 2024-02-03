@@ -13,6 +13,8 @@ import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 
+// ----------------------------------------------------------------------
+
 export default function ProductPersonalization() {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
@@ -105,7 +107,7 @@ export default function ProductPersonalization() {
         </Typography>
       </Grid>
       <Grid item xs={12}>
-        <Typography variant="h6" component="subtitle1" sx={{ mb: 3 }}>
+        <Typography variant="h6" component="span" sx={{ mb: 3 }}>
           Price
         </Typography>
       </Grid>

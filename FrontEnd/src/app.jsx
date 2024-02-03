@@ -5,7 +5,7 @@ import { useScrollToTop } from 'src/hooks/use-scroll-to-top';
 
 import Router from 'src/routes/sections';
 import ThemeProvider from 'src/theme';
-
+import { UserContextProvider } from './contexts/use-user-context';
 // ----------------------------------------------------------------------
 
 export default function App() {
@@ -13,7 +13,9 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <Router />
+      <UserContextProvider>
+        <Router />
+      </UserContextProvider>
     </ThemeProvider>
   );
 }

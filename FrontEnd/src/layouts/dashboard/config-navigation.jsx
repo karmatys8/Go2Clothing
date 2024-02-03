@@ -11,21 +11,30 @@ const navConfig = [
     title: 'products',
     path: '/',
     icon: icon('ic_cart'),
+    role: 'all',
+  },
+  {
+    title: 'product-page',
+    path: '/product-page',
+    role: 'all',
   },
   {
     title: 'user',
     path: '/user',
     icon: icon('ic_user'),
+    role: ['customer', 'admin'],
   },
   {
     title: 'stats',
     path: '/stats',
     icon: icon('ic_analytics'),
+    role: ['admin'],
   },
   {
     title: 'login',
     path: '/login',
     icon: icon('ic_lock'),
+    role: 'all',
   },
 ];
 

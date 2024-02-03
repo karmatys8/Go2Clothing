@@ -10,7 +10,10 @@ import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { alpha, useTheme } from '@mui/material/styles';
 
+import { useRouter } from 'src/routes/hooks';
+
 import { bgGradient } from 'src/theme/css';
+import { useUserContext } from 'src/contexts/use-user-context';
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
@@ -22,10 +25,15 @@ import PasswordTextField from 'src/components/password-text-field';
 export default function LoginView() {
   const theme = useTheme();
 
+  const router = useRouter();
+  const { setUserData } = useUserContext();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const login = async () => {
+  const login = async (event) => {
+    event.preventDefault();
+
     try {
       const response = await fetch('http://localhost:3000/users/login', {
         method: 'POST',
@@ -38,6 +46,9 @@ export default function LoginView() {
         const data = await response.json();
 
         localStorage.setItem('WDAI_Project_token', data.token);
+        setUserData(data.user);
+
+        router.back();
       }
     } catch (error) {
       console.error('Network error:', error.message);
@@ -45,7 +56,7 @@ export default function LoginView() {
   };
 
   const renderForm = (
-    <>
+    <form onSubmit={login}>
       <Stack spacing={3}>
         <EmailTextField email={email} setEmail={setEmail} />
         <PasswordTextField name="password" label="Password" setState={setPassword} />
@@ -57,17 +68,10 @@ export default function LoginView() {
         </Link>
       </Stack>
 
-      <LoadingButton
-        fullWidth
-        size="large"
-        type="submit"
-        variant="contained"
-        color="inherit"
-        onClick={login}
-      >
+      <LoadingButton fullWidth size="large" type="submit" variant="contained" color="inherit">
         Login
       </LoadingButton>
-    </>
+    </form>
   );
 
   return (
