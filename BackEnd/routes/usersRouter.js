@@ -6,7 +6,7 @@ const sql = require('mssql');
 const dbConfig = require("./db");
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
-
+const decodeTokenMiddleware = require('./verifyTokenMiddleware');
 
 router.use(cors());
 
@@ -109,6 +109,12 @@ router.post('/register', async (req, res) => {
         console.error('Database error:', err);
         res.status(500).send(err.message);
     }
+});
+
+router.get('/user-data', decodeTokenMiddleware, (req, res) => {
+    const decodedToken = req.decodedToken;
+    console.log('Decoded user data:', decodedToken);
+    res.status(200).json({ success: true, userData: decodedToken });
 });
 
 module.exports = router;
