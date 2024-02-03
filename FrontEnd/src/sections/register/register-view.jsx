@@ -36,7 +36,7 @@ export default function RegisterView() {
     }));
   };
 
-  const handleClick = async () => {
+  const register = async () => {
     try {
       const response = await fetch('http://localhost:3000/users/register', {
         method: 'POST',
@@ -54,7 +54,7 @@ export default function RegisterView() {
   };
 
   const renderForm = (
-    <>
+    <form onSubmit={register}>
       <Stack spacing={3}>
         <TextField name="firstName" label="First name" onChange={handleNameChange} />
 
@@ -79,12 +79,11 @@ export default function RegisterView() {
         type="submit"
         variant="contained"
         color="inherit"
-        onClick={handleClick}
         sx={{ mt: 5 }}
       >
         Register
       </LoadingButton>
-    </>
+    </form>
   );
 
   return (
