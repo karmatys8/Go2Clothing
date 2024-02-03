@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import Box from '@mui/material/Box';
@@ -11,10 +10,16 @@ import { Select, Button, MenuItem, InputLabel, FormControl } from '@mui/material
 
 import { fCurrency } from 'src/utils/format-number';
 
+import { useCartContext } from './use-cart-context';
+
 // ----------------------------------------------------------------------
 
 export default function CartItem({ product }) {
-  const [itemAmount] = useState(16);
+  const { updateItem, setCartData } = useCartContext();
+
+  const handleDelete = () => {
+    setCartData((currData) => currData.filter((item) => item.id !== product.id));
+  };
 
   const renderImg = (
     <Box
@@ -71,8 +76,21 @@ export default function CartItem({ product }) {
 
             <FormControl sx={{ width: 120 }}>
               <InputLabel id="amount-select-label">Amount</InputLabel>
-              <Select labelId="amount-select-label" id="amount-select" label="Amount">
-                {Array.from({ length: itemAmount }, (_, idx) => idx + 1).map((index) => (
+              <Select
+                labelId="amount-select-label"
+                id="amount-select"
+                label="Amount"
+                value={product.amount}
+                onChange={(value) => updateItem(product.id, value)}
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: 300,
+                    },
+                  },
+                }}
+              >
+                {Array.from({ length: product.inStock }, (_, idx) => idx + 1).map((index) => (
                   <MenuItem value={index} key={index}>
                     {index}
                   </MenuItem>
@@ -82,7 +100,7 @@ export default function CartItem({ product }) {
           </Stack>
 
           <Stack justifyContent="space-between" textAlign="right">
-            <Button startIcon={<DeleteIcon />} color="error">
+            <Button startIcon={<DeleteIcon />} color="error" onClick={handleDelete}>
               Delete
             </Button>
             {renderPrice}
