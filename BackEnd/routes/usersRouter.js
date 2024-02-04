@@ -49,7 +49,8 @@ router.post('/login', async (req, res) => {
                 lastName: result.recordset[0].LastName,
                 email: result.recordset[0].Email,
                 login: result.recordset[0].Login,
-                role: result.recordset[0].Position
+                role: result.recordset[0].Position,
+                userID: result.recordset[0].UserID
             };
             const token = jwt.sign(userData, 'secretKey');
             res.status(200).json({

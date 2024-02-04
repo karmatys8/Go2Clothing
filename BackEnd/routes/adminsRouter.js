@@ -7,25 +7,41 @@ router.get('/', (req, res) => {
     res.send("Admins main page");
 });
 
-router.get('/customers', async (req, res) => {
+router.get('/products', async (req, res) => {
     try {
         await sql.connect(dbConfig);
-        const result = await sql.query('SELECT * FROM Users as u inner join Customers as c on c.CustomerID=u.UserID');
-        await sql.close();
 
-        const formattedData = result.recordset.map(data => `
-      <div>
-        <h3>Name: ${data.FirstName} ${data.LastName}</h3>
-        <p>Login: ${data.Login}</p>
-        <p>Password: ####### </p>
-      </div>
-    `);
+        const result = await sql.query('SELECT * FROM AdminProductsView');
 
-        res.status(200).send(formattedData.join(''));
+        const formattedProducts = result.recordset.map(product => ({
+            productId: product.ProductID,
+            categoryName: product.CategoryName.trim(),
+            productName: product.ProductName.trim(),
+            colors: [product.ColorName.trim()],
+            sizes: [product.Size.trim()],
+            unitPrice: product.UnitPrice,
+            inStock: product.UnitinStock
+        }));
 
+        const groupedProducts = formattedProducts.reduce((acc, product) => {
+            const existingProduct = acc.find(p => p.productId === product.productId);
+
+            if (existingProduct) {
+                existingProduct.colors.push(product.colors[0]);
+                existingProduct.sizes.push(product.sizes[0]);
+            } else {
+                acc.push(product);
+            }
+
+            return acc;
+        }, []);
+
+        res.status(200).json(groupedProducts);
     } catch (err) {
-        console.error('Data download error:', err);
-        res.status(500).send(err.message);
+        console.error('Error fetching admin products:', err);
+        res.status(500).json({ error: err.message });
+    } finally {
+        await sql.close();
     }
 });
 
