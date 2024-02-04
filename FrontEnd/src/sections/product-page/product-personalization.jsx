@@ -5,19 +5,17 @@ import Radio from '@mui/material/Radio';
 import Button from '@mui/material/Button';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+
+import StickyComponent from 'src/components/sticky-grid';
 
 // ----------------------------------------------------------------------
 
 export default function ProductPersonalization() {
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const [selectedColor, setSelectedColor] = useState('Light Red');
   const [selectedSizes, setSelectedSizes] = useState('');
 
@@ -90,17 +88,7 @@ export default function ProductPersonalization() {
   );
 
   return (
-    <Grid
-      container
-      columnSpacing={4}
-      sx={{
-        position: 'sticky',
-        top: 140,
-        mt: isDesktop ? 17.5 : 0,
-        pl: isDesktop ? 10 : 0,
-        pb: 5,
-      }}
-    >
+    <StickyComponent top={17.5} generalStyles={{ pb: 5 }} wideScreenStyles={{ pl: 10 }}>
       <Grid item xs={12}>
         <Typography variant="h6" component="h2" sx={{ mb: 0.5 }}>
           Product Name
@@ -111,7 +99,6 @@ export default function ProductPersonalization() {
           Price
         </Typography>
       </Grid>
-
       <Grid item xs={6} md={12} sx={{ mb: 2.5 }} flex justifyContent="center">
         {renderColorPicker}
       </Grid>
@@ -128,7 +115,7 @@ export default function ProductPersonalization() {
           Add to Cart
         </Button>
       </Grid>
-    </Grid>
+    </StickyComponent>
   );
 }
 

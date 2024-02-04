@@ -11,7 +11,8 @@ export const RegisterPage = lazy(() => import('src/pages/register'));
 export const LoginPage = lazy(() => import('src/pages/login'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
-export const SingleProductPage = lazy(() => import('src/pages/product-page'))
+export const SingleProductPage = lazy(() => import('src/pages/product-page'));
+export const CartPage = lazy(() => import('src/pages/cart'));
 
 // ----------------------------------------------------------------------
 
@@ -28,13 +29,25 @@ export default function Router() {
       children: [
         { element: <ProductsPage />, index: true },
         { path: 'product-page', element: <SingleProductPage /> },
-        { path: 'user', element: <PrivateComponent component={<UserPage />} allowedRoles={['customer', 'admin']} /> },
-        { path: 'stats', element: <PrivateComponent component={<AdminStatsPage />} allowedRoles={['admin']} />},
+        {
+          path: 'user',
+          element: (
+            <PrivateComponent component={<UserPage />} allowedRoles={['customer', 'admin']} />
+          ),
+        },
+        {
+          path: 'cart',
+          element: <PrivateComponent component={<CartPage />} allowedRoles={['customer']} />,
+        },
+        {
+          path: 'stats',
+          element: <PrivateComponent component={<AdminStatsPage />} allowedRoles={['admin']} />,
+        },
       ],
     },
     {
       path: 'register',
-      element: <RegisterPage />
+      element: <RegisterPage />,
     },
     {
       path: 'login',
