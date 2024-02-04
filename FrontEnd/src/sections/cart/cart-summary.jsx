@@ -1,30 +1,19 @@
+import { Alert, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
-import { Alert, useTheme, Typography, useMediaQuery } from '@mui/material';
+
+import StickyComponent from 'src/components/sticky-grid';
 
 import { useCartContext } from './use-cart-context';
 
 // ----------------------------------------------------------------------
 
 export default function CartSummary() {
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
-
   const { totalPrice } = useCartContext();
   const freeShippingThreshold = 500;
   const shippingPrice = totalPrice >= freeShippingThreshold ? 0 : 100;
 
   return (
-    <Grid
-      direction="row"
-      container
-      spacing={1.5}
-      sx={{
-        position: 'sticky',
-        top: 140,
-        mt: isDesktop ? 17.5 : 0,
-        p: isDesktop ? 5 : 0,
-      }}
-    >
+    <StickyComponent top={9} spacing={1.5} wideScreenStyles={{ p: 5 }}>
       <Grid
         item
         xs={12}
@@ -55,6 +44,6 @@ export default function CartSummary() {
           {`Free shipping from $${freeShippingThreshold}`}
         </Alert>
       </Grid>
-    </Grid>
+    </StickyComponent>
   );
 }
