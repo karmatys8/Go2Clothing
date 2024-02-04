@@ -11,7 +11,7 @@ export default function CartView() {
   return (
     <CartContextProvider>
       <Container sx={{ mb: 5 }}>
-        <Grid container sx={{ mt: 5 }}>
+        <Grid container>
           <Grid item xs={12} md={8}>
             <CartItemsList />
           </Grid>

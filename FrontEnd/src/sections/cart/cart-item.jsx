@@ -6,7 +6,15 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Select, Button, MenuItem, InputLabel, FormControl } from '@mui/material';
+import {
+  Select,
+  Button,
+  MenuItem,
+  useTheme,
+  InputLabel,
+  FormControl,
+  useMediaQuery,
+} from '@mui/material';
 
 import { fCurrency } from 'src/utils/format-number';
 
@@ -15,6 +23,9 @@ import { useCartContext } from './use-cart-context';
 // ----------------------------------------------------------------------
 
 export default function CartItem({ product }) {
+  const theme = useTheme();
+  const isTablet = useMediaQuery(theme.breakpoints.up('sm'));
+
   const { updateItem, setCartData } = useCartContext();
 
   const handleDelete = () => {
@@ -36,8 +47,35 @@ export default function CartItem({ product }) {
     />
   );
 
+  const renderSelect = (
+    <FormControl sx={{ width: 75 }}>
+      <InputLabel id="amount-select-label">Amount</InputLabel>
+      <Select
+        labelId="amount-select-label"
+        id="amount-select"
+        label="Amount"
+        value={product.amount}
+        onChange={(event) => updateItem(product.id, event.target.value)}
+        size="small"
+        MenuProps={{
+          PaperProps: {
+            style: {
+              maxHeight: 300,
+            },
+          },
+        }}
+      >
+        {Array.from({ length: product.inStock }, (_, idx) => idx + 1).map((index) => (
+          <MenuItem value={index} key={index}>
+            {index}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  );
+
   const renderPrice = (
-    <Typography variant="subtitle1" sx={{ pb: 2 }}>
+    <Typography variant="subtitle1">
       <Typography
         component="span"
         variant="body1"
@@ -55,56 +93,39 @@ export default function CartItem({ product }) {
 
   return (
     <Card>
-      <Stack direction="row">
-        <Box sx={{ pt: 25, position: 'relative', height: 1, aspectRatio: '1/1' }}>{renderImg}</Box>
+      <Stack direction={isTablet ? 'row' : 'column'} position="relative">
+        <Stack direction="row" flexGrow={1}>
+          <Box sx={{ pt: 20, position: 'relative', height: 1, aspectRatio: '1/1' }}>
+            {renderImg}
+          </Box>
 
-        <Stack
-          justifyContent="space-between"
-          direction="row"
-          overflow="hidden"
-          spacing={2}
-          sx={{ p: 3, width: 1 }}
-        >
-          <Stack justifyContent="space-between" overflow="hidden">
+          <Stack justifyContent="space-between" overflow="hidden" spacing={2} sx={{ p: 2 }}>
             <Box>
               <Link color="inherit" underline="hover" variant="subtitle1" noWrap>
                 {product.name}
               </Link>
-              <Typography>Color: picked color</Typography>
-              <Typography>Size: picked size</Typography>
+              <Typography variant="body2" noWrap>
+                Color: picked color
+              </Typography>
+              <Typography variant="body2" noWrap>
+                Size: picked size
+              </Typography>
             </Box>
 
-            <FormControl sx={{ width: 120 }}>
-              <InputLabel id="amount-select-label">Amount</InputLabel>
-              <Select
-                labelId="amount-select-label"
-                id="amount-select"
-                label="Amount"
-                value={product.amount}
-                onChange={(value) => updateItem(product.id, value)}
-                MenuProps={{
-                  PaperProps: {
-                    style: {
-                      maxHeight: 300,
-                    },
-                  },
-                }}
-              >
-                {Array.from({ length: product.inStock }, (_, idx) => idx + 1).map((index) => (
-                  <MenuItem value={index} key={index}>
-                    {index}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            {renderSelect}
           </Stack>
+        </Stack>
 
-          <Stack justifyContent="space-between" textAlign="right">
-            <Button startIcon={<DeleteIcon />} color="error" onClick={handleDelete}>
-              Delete
-            </Button>
-            {renderPrice}
-          </Stack>
+        <Stack
+          direction={isTablet ? 'column' : 'row'}
+          justifyContent="space-between"
+          textAlign="right"
+          sx={{ p: 2 }}
+        >
+          <Button startIcon={<DeleteIcon />} color="error" onClick={handleDelete} size="small">
+            Delete
+          </Button>
+          {renderPrice}
         </Stack>
       </Stack>
     </Card>
