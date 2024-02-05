@@ -48,4 +48,38 @@ router.get('/', decodeTokenMiddleware, async (req, res) => {
     }
 });
 
+router.post('/newOrder', async (req, res) => {
+    try {
+        const pool = await sql.connect(dbConfig);
+        const { CustomerID, DeliveryDays, Freight, OrderDetails } = req.body;
+
+        const result = await sql.query`
+            DECLARE @NewOrderID INT;
+
+            EXEC dbo.AddOrder
+                 @CustomerID = ${CustomerID},
+                 @DeliveryDays = ${DeliveryDays},
+                 @Freight = ${Freight},
+                 @NewOrderID = @NewOrderID OUTPUT;
+
+            SELECT @NewOrderID AS NewOrderID;
+        `;
+
+        const NewOrderID = result.recordset[0].NewOrderID;
+
+        for (const detail of OrderDetails) {
+            await sql.query`
+                EXEC InsertOrderDetails ${NewOrderID},${detail.Product_DetailsID},${detail.Quantity},${detail.Discount}
+            `;
+        }
+        await sql.close();
+        res.status(200).json({ success: true, NewOrderID: NewOrderID });
+
+    } catch (err) {
+        console.error('Error adding order:', err);
+        res.status(500).json({ success: false, error: 'Error adding order: ' + err.message });
+    }
+});
+
+
 module.exports = router;
