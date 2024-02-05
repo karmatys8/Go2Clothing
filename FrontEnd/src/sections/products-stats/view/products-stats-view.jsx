@@ -2,19 +2,17 @@ import * as React from 'react';
 
 import { Container } from '@mui/material';
 import { Edit, Cancel, Delete } from '@mui/icons-material';
-import { DataGrid, GridRowModes, GridSaveAltIcon, GridActionsCellItem, GridRowEditStopReasons } from '@mui/x-data-grid';
+import {
+  DataGrid,
+  GridRowModes,
+  GridSaveAltIcon,
+  GridActionsCellItem,
+  GridRowEditStopReasons,
+} from '@mui/x-data-grid';
 
 import EditToolbar from '../edit-toolbar';
 
 // ----------------------------------------------------------------------
-
-const initialRows = [
-  { id: 1, category: 'Clothing', name: 'T-Shirt', price: 20, discountedPrice: 15, colors: ["#f0fff0", "#af246a", "#bbbbbb"], sizes: ["12", "45", "67"], inStock: 45 },
-  { id: 2, category: 'Electronics', name: 'Smartphone', price: 500, discountedPrice: 450, colors: ["#f0fff0", "#af246a", "#bbbbbb"], sizes: null, inStock: 30 },
-  { id: 3, category: 'Footwear', name: 'Running Shoes', price: 80, discountedPrice: 70, colors: ["#f0fff0", "#af246a", "#bbbbbb"], sizes: ["12", "45", "67"], inStock: 30 },
-  { id: 4, category: 'Home Decor', name: 'Cushion Cover', price: 15, discountedPrice: 12, colors: ["#f0fff0", "#af246a", "#bbbbbb"], sizes: ["12", "45", "67"], inStock: 40 },
-  { id: 5, category: 'Books', name: 'Fantasy Novel', price: 25, discountedPrice: 20, colors: null, sizes: ["12", "45", "67"], inStock: 50 },
-];
 
 export default function ProductsStatsPage() {
   const [rows, setRows] = React.useState(initialRows);
@@ -70,46 +68,54 @@ export default function ProductsStatsPage() {
     {
       field: 'category',
       headerName: 'Category',
-      width: 150,
+      width: 200,
       editable: true,
       type: 'string',
     },
     {
       field: 'name',
       headerName: 'Name',
-      width: 150,
+      width: 200,
       editable: true,
       type: 'string',
     },
     {
       field: 'price',
       headerName: 'Price',
-      width: 100,
+      width: 90,
       editable: true,
       type: 'number',
     },
     {
       field: 'discountedPrice',
       headerName: 'Discounted Price',
-      width: 100,
+      width: 90,
       editable: true,
       type: 'number',
     },
     {
-      field: 'colors',
-      headerName: 'Colors',
-      width: 290,
+      field: 'color',
+      headerName: 'Color',
+      width: 150,
       editable: true,
       sortable: false,
       type: 'string',
     },
     {
-      field: 'sizes',
-      headerName: 'Sizes',
-      width: 200,
+      field: 'size',
+      headerName: 'Size',
+      width: 150,
       editable: true,
       sortable: false,
-      type: 'string'
+      type: 'string',
+    },
+    {
+      field: 'inStock',
+      headerName: 'In Stock',
+      width: 90,
+      editable: true,
+      sortable: false,
+      type: 'number',
     },
     {
       field: 'actions',
@@ -159,6 +165,23 @@ export default function ProductsStatsPage() {
     },
   ];
 
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/admin/products');
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data[0]);
+          setRows(data);
+        }
+      } catch (error) {
+        console.log('e', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <Container>
       <DataGrid
@@ -170,7 +193,7 @@ export default function ProductsStatsPage() {
         onRowEditStop={handleRowEditStop}
         processRowUpdate={processRowUpdate}
         slots={{
-          toolbar: EditToolbar
+          toolbar: EditToolbar,
         }}
         slotProps={{
           toolbar: { setRows, setRowModesModel },
@@ -180,7 +203,7 @@ export default function ProductsStatsPage() {
             paginationModel: { page: 0, pageSize: 5 },
           },
         }}
-        pageSizeOptions={[5, 10]}
+        pageSizeOptions={[10, 25, 100]}
       />
     </Container>
   );
