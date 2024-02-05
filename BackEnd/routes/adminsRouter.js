@@ -87,4 +87,42 @@ router.delete('/deleteProduct/:id', async (req, res) => {
     }
 });
 
+
+router.post('/updateProduct', async (req, res) => {
+    try {
+        const pool = await sql.connect(dbConfig);
+        const { ProductId, ProductName, CategoryID, UnitPrice, Discount, Gender,
+            Product_DetailsID, UnitInStock, Active  } = req.body;
+
+        const productUpdateResult = await sql.query`
+                UPDATE Products SET 
+                    ProductName = ${ProductName}, CategoryID = ${CategoryID}, UnitPrice = ${UnitPrice}, 
+                    Discount = ${Discount}, Gender = ${Gender}
+                WHERE ProductID = ${ProductId};
+        `;
+
+        const productDetailsUpdateResult = await sql.query`
+                UPDATE Product_Details SET 
+                    UnitInStock = ${UnitInStock}, Active = ${Active}
+                WHERE Product_DetailsID = ${Product_DetailsID};
+        `;
+
+        await sql.close();
+
+        if (productDetailsUpdateResult.rowsAffected && productDetailsUpdateResult.rowsAffected[0] > 0
+            && productUpdateResult.rowsAffected && productUpdateResult.rowsAffected[0] > 0) {
+            res.status(201).send('The product and product details have been updated successfully.');
+        } else if(productUpdateResult.rowsAffected && productUpdateResult.rowsAffected[0] > 0){
+            res.status(500).send('Only the product has been updated successfully.');
+        }
+        else {
+            res.status(500).send('An error occurred while updating the product.');
+        }
+
+    } catch (err) {
+        console.error('Error updating product:', err);
+        res.status(500).send('An error occurred while updating the product:' + err.message);
+    }
+});
+
 module.exports = router;
