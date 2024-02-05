@@ -5,8 +5,8 @@ import DashboardLayout from 'src/layouts/dashboard';
 
 import { PrivateComponent } from './components';
 
-export const AdminStatsPage = lazy(() => import('src/pages/admin-stats'));
-export const UserPage = lazy(() => import('src/pages/user'));
+export const OrdersStatsPage = lazy(() => import('src/pages/orders-stats'));
+export const ProductsStatsPage = lazy(() => import('src/pages/products-stats'));
 export const RegisterPage = lazy(() => import('src/pages/register'));
 export const LoginPage = lazy(() => import('src/pages/login'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
@@ -30,18 +30,16 @@ export default function Router() {
         { element: <ProductsPage />, index: true },
         { path: 'product-page', element: <SingleProductPage /> },
         {
-          path: 'user',
-          element: (
-            <PrivateComponent component={<UserPage />} allowedRoles={['customer', 'admin']} />
-          ),
-        },
-        {
           path: 'cart',
           element: <PrivateComponent component={<CartPage />} allowedRoles={['customer']} />,
         },
         {
-          path: 'stats',
-          element: <PrivateComponent component={<AdminStatsPage />} allowedRoles={['admin']} />,
+          path: 'products-stats',
+          element: <PrivateComponent component={<ProductsStatsPage />} allowedRoles={['admin']} />,
+        },
+        {
+          path: 'orders-stats',
+          element: <PrivateComponent component={<OrdersStatsPage />} allowedRoles={['admin']} />,
         },
       ],
     },
