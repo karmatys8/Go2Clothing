@@ -9,6 +9,7 @@ var indexRouter = require('./routes/indexRouter');
 var adminsRouter = require('./routes/adminsRouter');
 var productsRouter = require('./routes/productsRouter');
 var usersRouter = require('./routes/usersRouter');
+var customerRouter = require('./routes/customerRouter');
 
 var app = express();
 
@@ -28,6 +29,7 @@ app.use('/', indexRouter);
 app.use('/admin', adminsRouter);
 app.use('/products', productsRouter);
 app.use('/users', usersRouter);
+app.use('/customer', customerRouter);
 
 app.use(function(req, res, next) {
   next(createError(404));

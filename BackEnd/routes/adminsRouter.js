@@ -7,27 +7,61 @@ router.get('/', (req, res) => {
     res.send("Admins main page");
 });
 
-router.get('/customers', async (req, res) => {
+router.get('/products', async (req, res) => {
     try {
         await sql.connect(dbConfig);
-        const result = await sql.query('SELECT * FROM Users as u inner join Customers as c on c.CustomerID=u.UserID');
-        await sql.close();
 
-        const formattedData = result.recordset.map(data => `
-      <div>
-        <h3>Name: ${data.FirstName} ${data.LastName}</h3>
-        <p>Login: ${data.Login}</p>
-        <p>Password: ####### </p>
-      </div>
-    `);
+        const result = await sql.query('SELECT * FROM AdminProductsView');
 
-        res.status(200).send(formattedData.join(''));
+        const groupedProducts = result.recordset.reduce((acc, product) => {
+            const existingProduct = acc.find(p => p.productId === product.ProductID);
 
+            if (existingProduct) {
+                const existingColor = existingProduct.colors.find(c => c.color === product.ColorName.trim());
+
+                if (existingColor) {
+                    existingColor.sizes.push({
+                        size: product.Size.trim(),
+                        stock: product.UnitinStock
+                    });
+                } else {
+                    existingProduct.colors.push({
+                        color: product.ColorName.trim(),
+                        sizes: [{
+                            size: product.Size.trim(),
+                            stock: product.UnitinStock
+                        }]
+                    });
+                }
+            } else {
+                acc.push({
+                    productId: product.ProductID,
+                    categoryName: product.CategoryName.trim(),
+                    productName: product.ProductName.trim(),
+                    colors: [{
+                        color: product.ColorName.trim(),
+                        sizes: [{
+                            size: product.Size.trim(),
+                            stock: product.UnitinStock
+                        }]
+                    }],
+                    unitPrice: product.UnitPrice,
+                });
+            }
+
+            return acc;
+        }, []);
+
+        res.status(200).json(groupedProducts);
     } catch (err) {
-        console.error('Data download error:', err);
-        res.status(500).send(err.message);
+        console.error('Error fetching admin products:', err);
+        res.status(500).json({ error: err.message });
+    } finally {
+        await sql.close();
     }
 });
+
+
 
 router.post('/addProduct', async (req, res) => {
     try {
@@ -68,6 +102,44 @@ router.delete('/deleteProduct/:id', async (req, res) => {
     } catch (err) {
         console.error('Error deleting product:', err);
         res.status(500).send('An error occurred while deleting the product:' + err.message);
+    }
+});
+
+
+router.post('/updateProduct', async (req, res) => {
+    try {
+        const pool = await sql.connect(dbConfig);
+        const { ProductId, ProductName, CategoryID, UnitPrice, Discount, Gender,
+            Product_DetailsID, UnitInStock, Active  } = req.body;
+
+        const productUpdateResult = await sql.query`
+                UPDATE Products SET 
+                    ProductName = ${ProductName}, CategoryID = ${CategoryID}, UnitPrice = ${UnitPrice}, 
+                    Discount = ${Discount}, Gender = ${Gender}
+                WHERE ProductID = ${ProductId};
+        `;
+
+        const productDetailsUpdateResult = await sql.query`
+                UPDATE Product_Details SET 
+                    UnitInStock = ${UnitInStock}, Active = ${Active}
+                WHERE Product_DetailsID = ${Product_DetailsID};
+        `;
+
+        await sql.close();
+
+        if (productDetailsUpdateResult.rowsAffected && productDetailsUpdateResult.rowsAffected[0] > 0
+            && productUpdateResult.rowsAffected && productUpdateResult.rowsAffected[0] > 0) {
+            res.status(201).send('The product and product details have been updated successfully.');
+        } else if(productUpdateResult.rowsAffected && productUpdateResult.rowsAffected[0] > 0){
+            res.status(500).send('Only the product has been updated successfully.');
+        }
+        else {
+            res.status(500).send('An error occurred while updating the product.');
+        }
+
+    } catch (err) {
+        console.error('Error updating product:', err);
+        res.status(500).send('An error occurred while updating the product:' + err.message);
     }
 });
 
