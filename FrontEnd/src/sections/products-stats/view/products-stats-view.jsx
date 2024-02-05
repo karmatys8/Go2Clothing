@@ -14,8 +14,9 @@ import EditToolbar from '../edit-toolbar';
 
 // ----------------------------------------------------------------------
 
+
 export default function ProductsStatsPage() {
-  const [rows, setRows] = React.useState(initialRows);
+  const [rows, setRows] = React.useState({});
   const [rowModesModel, setRowModesModel] = React.useState({});
 
   const handleRowEditStop = (params, event) => {
@@ -29,7 +30,10 @@ export default function ProductsStatsPage() {
   };
 
   const handleSaveClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+
+    setRowModesModel({...rowModesModel, [id]: {mode: GridRowModes.View}});
+    // const editedRow = rows.find((row) => row.id === id);
+
   };
 
   const handleDeleteClick = (id) => () => {
@@ -48,9 +52,27 @@ export default function ProductsStatsPage() {
     }
   };
 
-  const processRowUpdate = (newRow) => {
-    const updatedRow = { ...newRow, isNew: false };
+  const processRowUpdate = async (newRow) => {
+    const updatedRow = {...newRow, isNew: false};
     setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
+
+    try {
+      const response = await fetch('http://localhost:3000/admin/updateProduct', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedRow)
+      });
+      if (response.ok) {
+        console.log('Edited Successfully');
+      } else {
+        console.error('Failed to edit:', response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error('Network error:', error.message);
+    }
+
     return updatedRow;
   };
 
@@ -87,8 +109,8 @@ export default function ProductsStatsPage() {
       type: 'number',
     },
     {
-      field: 'discountedPrice',
-      headerName: 'Discounted Price',
+      field: 'discount',
+      headerName: 'Discount',
       width: 90,
       editable: true,
       type: 'number',

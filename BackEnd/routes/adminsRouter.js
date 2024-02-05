@@ -2,57 +2,31 @@ const express = require('express');
 const router = express.Router();
 const sql = require('mssql');
 const dbConfig = require("./db");
-
+const cors = require('cors');
+router.use(cors());
 router.get('/', (req, res) => {
     res.send("Admins main page");
 });
 
 router.get('/products', async (req, res) => {
+
     try {
         await sql.connect(dbConfig);
 
-        const result = await sql.query('SELECT * FROM AdminProductsView');
+        const result = await sql.query('SELECT * FROM AllProductsData');
 
-        const groupedProducts = result.recordset.reduce((acc, product) => {
-            const existingProduct = acc.find(p => p.productId === product.ProductID);
+        const mappedRecords = result.recordset.map((record) => ({
+            id: record.Product_DetailsID,
+            category: record.CategoryName.trim(),
+            name: record.ProductName.trim(),
+            price: record.UnitPrice,
+            discount: record.DiscountedPrice,
+            color: record.ColorName,
+            size: record.Size.trim(),
+            inStock: record.UnitInStock,
+        }));
 
-            if (existingProduct) {
-                const existingColor = existingProduct.colors.find(c => c.color === product.ColorName.trim());
-
-                if (existingColor) {
-                    existingColor.sizes.push({
-                        size: product.Size.trim(),
-                        stock: product.UnitinStock
-                    });
-                } else {
-                    existingProduct.colors.push({
-                        color: product.ColorName.trim(),
-                        sizes: [{
-                            size: product.Size.trim(),
-                            stock: product.UnitinStock
-                        }]
-                    });
-                }
-            } else {
-                acc.push({
-                    productId: product.ProductID,
-                    categoryName: product.CategoryName.trim(),
-                    productName: product.ProductName.trim(),
-                    colors: [{
-                        color: product.ColorName.trim(),
-                        sizes: [{
-                            size: product.Size.trim(),
-                            stock: product.UnitinStock
-                        }]
-                    }],
-                    unitPrice: product.UnitPrice,
-                });
-            }
-
-            return acc;
-        }, []);
-
-        res.status(200).json(groupedProducts);
+        res.status(200).json(mappedRecords);
     } catch (err) {
         console.error('Error fetching admin products:', err);
         res.status(500).json({ error: err.message });
@@ -107,21 +81,36 @@ router.delete('/deleteProduct/:id', async (req, res) => {
 
 
 router.post('/updateProduct', async (req, res) => {
+
     try {
         const pool = await sql.connect(dbConfig);
-        const { ProductId, ProductName, CategoryID, UnitPrice, Discount, Gender,
-            Product_DetailsID, UnitInStock, Active  } = req.body;
+
+        const {
+            id: Product_DetailsID,
+            category: CategoryName,
+            name: ProductName,
+            price: UnitPrice,
+            discount: Discount,
+            color: Color,
+            size: Size,
+            inStock: UnitInStock,
+            isNew: IsNew
+        } = req.body;
+
+        const result = await sql.query`SELECT dbo.GetProductIDByProductDetailsID(${Product_DetailsID}) AS ProductId`;
+
+        const ProductId = result.recordset[0].ProductId;
 
         const productUpdateResult = await sql.query`
                 UPDATE Products SET 
-                    ProductName = ${ProductName}, CategoryID = ${CategoryID}, UnitPrice = ${UnitPrice}, 
-                    Discount = ${Discount}, Gender = ${Gender}
+                    ProductName = ${ProductName}, UnitPrice = ${UnitPrice}, 
+                    Discount = ${Discount}
                 WHERE ProductID = ${ProductId};
         `;
 
         const productDetailsUpdateResult = await sql.query`
                 UPDATE Product_Details SET 
-                    UnitInStock = ${UnitInStock}, Active = ${Active}
+                    UnitInStock = ${UnitInStock}, Size = ${Size}
                 WHERE Product_DetailsID = ${Product_DetailsID};
         `;
 
