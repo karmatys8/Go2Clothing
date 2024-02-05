@@ -10,7 +10,7 @@ export const UserContextProvider = ({ children }) => {
   const [userData, setUserData] = useState({});
 
   useEffect(() => {
-    if(userData != null && Object.keys(userData).length === 0){
+    if(userData !== null && Object.keys(userData).length === 0){
       const token = localStorage.getItem('WDAI_Project_token');
       if (token) {
         const decoded = jwtDecode(token);
