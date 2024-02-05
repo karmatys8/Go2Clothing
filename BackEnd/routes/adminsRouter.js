@@ -13,24 +13,40 @@ router.get('/products', async (req, res) => {
 
         const result = await sql.query('SELECT * FROM AdminProductsView');
 
-        const formattedProducts = result.recordset.map(product => ({
-            productId: product.ProductID,
-            categoryName: product.CategoryName.trim(),
-            productName: product.ProductName.trim(),
-            colors: [product.ColorName.trim()],
-            sizes: [product.Size.trim()],
-            unitPrice: product.UnitPrice,
-            inStock: product.UnitinStock
-        }));
-
-        const groupedProducts = formattedProducts.reduce((acc, product) => {
-            const existingProduct = acc.find(p => p.productId === product.productId);
+        const groupedProducts = result.recordset.reduce((acc, product) => {
+            const existingProduct = acc.find(p => p.productId === product.ProductID);
 
             if (existingProduct) {
-                existingProduct.colors.push(product.colors[0]);
-                existingProduct.sizes.push(product.sizes[0]);
+                const existingColor = existingProduct.colors.find(c => c.color === product.ColorName.trim());
+
+                if (existingColor) {
+                    existingColor.sizes.push({
+                        size: product.Size.trim(),
+                        stock: product.UnitinStock
+                    });
+                } else {
+                    existingProduct.colors.push({
+                        color: product.ColorName.trim(),
+                        sizes: [{
+                            size: product.Size.trim(),
+                            stock: product.UnitinStock
+                        }]
+                    });
+                }
             } else {
-                acc.push(product);
+                acc.push({
+                    productId: product.ProductID,
+                    categoryName: product.CategoryName.trim(),
+                    productName: product.ProductName.trim(),
+                    colors: [{
+                        color: product.ColorName.trim(),
+                        sizes: [{
+                            size: product.Size.trim(),
+                            stock: product.UnitinStock
+                        }]
+                    }],
+                    unitPrice: product.UnitPrice,
+                });
             }
 
             return acc;
@@ -44,6 +60,8 @@ router.get('/products', async (req, res) => {
         await sql.close();
     }
 });
+
+
 
 router.post('/addProduct', async (req, res) => {
     try {
