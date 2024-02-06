@@ -1,3 +1,4 @@
+import {useParams} from "react-router-dom";
 import { useState, useEffect } from 'react';
 
 import ImageList from '@mui/material/ImageList';
@@ -11,43 +12,43 @@ import useFade from 'src/hooks/use-fade';
 
 // ----------------------------------------------------------------------
 
-const itemData = [
-  {
-    id: 0,
-    img: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e',
-    title: 'Breakfast',
-  },
-  {
-    id: 1,
-    img: 'https://images.unsplash.com/photo-1551782450-a2132b4ba21d',
-    title: 'Burger',
-  },
-  {
-    id: 2,
-    img: 'https://images.unsplash.com/photo-1522770179533-24471fcdba45',
-    title: 'Camera',
-  },
-  {
-    id: 3,
-    img: 'https://images.unsplash.com/photo-1444418776041-9c7e33cc5a9c',
-    title: 'Coffee',
-  },
-  {
-    id: 4,
-    img: 'https://images.unsplash.com/photo-1533827432537-70133748f5c8',
-    title: 'Hats',
-  },
-  {
-    id: 5,
-    img: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62',
-    title: 'Honey',
-  },
-  {
-    id: 6,
-    img: 'https://images.unsplash.com/photo-1516802273409-68526ee1bdd6',
-    title: 'Basketball',
-  },
-];
+// const itemData = [
+//   {
+//     id: 0,
+//     img: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e',
+//     title: 'Breakfast',
+//   },
+//   {
+//     id: 1,
+//     img: 'https://images.unsplash.com/photo-1551782450-a2132b4ba21d',
+//     title: 'Burger',
+//   },
+//   {
+//     id: 2,
+//     img: 'https://images.unsplash.com/photo-1522770179533-24471fcdba45',
+//     title: 'Camera',
+//   },
+//   {
+//     id: 3,
+//     img: 'https://images.unsplash.com/photo-1444418776041-9c7e33cc5a9c',
+//     title: 'Coffee',
+//   },
+//   {
+//     id: 4,
+//     img: 'https://images.unsplash.com/photo-1533827432537-70133748f5c8',
+//     title: 'Hats',
+//   },
+//   {
+//     id: 5,
+//     img: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62',
+//     title: 'Honey',
+//   },
+//   {
+//     id: 6,
+//     img: 'https://images.unsplash.com/photo-1516802273409-68526ee1bdd6',
+//     title: 'Basketball',
+//   },
+// ];
 
 const iconButtonStyles = {
   position: 'absolute',
@@ -65,10 +66,29 @@ const pickedImageStyles = {
 };
 
 export default function ProductImages() {
-  const [productImages] = useState(itemData);
+  const { productId } = useParams();
+
+  // const [productImages] = useState(itemData);
   const [imageIndex, setImageIndex] = useState(0);
   const [isVisible, setIsVisible, fadeProps] = useFade();
+  const [productImages, setProductImages] = useState([]);
 
+  useEffect(() => {
+    const fetchProductImages = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/products/images/${productId}`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setProductImages(data);
+      } catch (error) {
+        console.error('Error fetching product images:', error);
+      }
+    };
+
+    fetchProductImages();
+  }, [productId]);
   const handleClickImage = (id) => {
     setIsVisible(false);
     setImageIndex(id);

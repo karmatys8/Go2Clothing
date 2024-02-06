@@ -2,6 +2,11 @@ const express = require('express');
 const router = express.Router();
 const sql = require('mssql');
 const dbConfig = require("./db");
+const cors = require("cors");
+
+
+router.use(cors());
+
 
 router.get('/', async (req, res) => {
     try {
@@ -109,5 +114,195 @@ router.get('/:id', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+router.get('/size/:id',async (req, res) => {
+    const productId = req.params.id;
+    try {
+        await sql.connect(dbConfig);
+        const result = await sql.query`EXEC GetSizes @ProductId = ${productId}`;
+        await sql.close();
+        if (result.recordset.length === 0) {
+            return res.status(404).json({ error: 'Product not found.' });
+        }
+        const sizes = result.recordset.map(record => record.Size.trim()); // Usuwa białe znaki ze wszystkich rozmiarów
+
+        res.status(200).json(sizes);
+    } catch (err) {
+        console.error('Error while fetching sizes:', err);
+        res.status(500).send('An error occurred while fetching sizes:' + err.message);
+    }
+});
+
+router.get('/images/:id',async (req, res) => {
+    const productId = req.params.id;
+    try {
+        await sql.connect(dbConfig);
+        const result = await sql.query`EXEC GetImagesAndIconsByProductID @ProductId = ${productId}`;
+        await sql.close();
+        if (result.recordset.length === 0) {
+            return res.status(404).json({ error: 'Product not found.' });
+        }
+        const images = result.recordset.map((record) => ({
+            id: record.id,
+            img: record.img,
+            title: record.title.trim(),
+        }));
+        res.status(200).json(images);
+    } catch (err) {
+        console.error('Error while fetching images:', err);
+        res.status(500).send('An error occurred while fetching images:' + err.message);
+    }
+});
+
+router.get('/colors/:id',async (req, res) => {
+    const productId = req.params.id;
+    try {
+        await sql.connect(dbConfig);
+        const result = await sql.query`EXEC GetColorsByProductID @ProductId = ${productId}`;
+        await sql.close();
+        if (result.recordset.length === 0) {
+            return res.status(404).json({ error: 'Product not found.' });
+        }
+        const images = result.recordset.map((record) => ({
+            id: record.id,
+            colorHex: record.colorHex,
+            colorName: record.colorName.trim(),
+        }));
+        res.status(200).json(images);
+    } catch (err) {
+        console.error('Error while fetching colors:', err);
+        res.status(500).send('An error occurred while fetching colors:' + err.message);
+    }
+});
+
+
+router.get('/details/:id',async (req, res) => {
+    const productId = req.params.id;
+    try {
+        await sql.connect(dbConfig);
+        const result = await sql.query`EXEC GetDetailsByProductID @ProductId = ${productId}`;
+        await sql.close();
+        if (result.recordset.length === 0) {
+            return res.status(404).json({ error: 'Product not found.' });
+        }
+        const details = result.recordset.map((record) => ({
+            ProductName: record.ProductName,
+            ProductPrice: record.ProductPrice,
+        }));
+        res.status(200).json(details);
+    } catch (err) {
+        console.error('Error while fetching images:', err);
+        res.status(500).send('An error occurred while fetching images:' + err.message);
+    }
+});
+
+router.get('/description/:id',async (req, res) => {
+    const productId = req.params.id;
+    try {
+        await sql.connect(dbConfig);
+        const result = await sql.query`EXEC GetPescriptionByProductID @ProductId = ${productId}`;
+        await sql.close();
+        if (result.recordset.length === 0) {
+            return res.status(404).json({ error: 'Product not found.' });
+        }
+        const details = result.recordset.map((record) => ({
+            ProductDescription: record.ProductDescription,
+        }));
+        res.status(200).json(details);
+    } catch (err) {
+        console.error('Error while fetching images:', err);
+        res.status(500).send('An error occurred while fetching description:' + err.message);
+    }
+});
+
+router.get('/:from/:offset', async (req, res) => {
+    const from = req.params.from;
+    const offset = req.params.offset;
+
+    try {
+        await sql.connect(dbConfig);
+        const result = await sql.query(`
+            EXEC GetMainProductDetails2 ${from}, ${offset}
+            `);
+        let products = result.recordset;
+
+        products = products.map(product => {
+            const colors = product.colors ? product.colors.split(",") : [];
+            return {
+                cover: product.cover,
+                id: product.id,
+                name: product.name,
+                priceSale: product.priceSale,
+                price: product.price,
+                status: product.status,
+                colors: colors
+            };
+        });
+
+        const recordsets = [products];
+        const recordset = [...products];
+        const output = {};
+        const rowsAffected = [products.length];
+
+        const finalResult = {
+            recordsets: recordsets,
+            recordset: recordset,
+            output: output,
+            rowsAffected: rowsAffected
+        };
+
+        await sql.close();
+        res.json(finalResult);
+    } catch (err) {
+        console.error('Data download error:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.get('/:offset/:rowCount/:productId', async (req, res) => {
+    const productId = req.params.productId;
+    const offset = req.params.offset;
+    const rowCount = req.params.rowCount;
+
+    try {
+        await sql.connect(dbConfig);
+        const result = await sql.query(`
+            EXEC GetMainProductDetails3 ${offset}, ${rowCount}, ${productId}
+            `);
+        let products = result.recordset;
+
+        products = products.map(product => {
+            const colors = product.colors ? product.colors.split(",") : [];
+            return {
+                cover: product.cover,
+                id: product.id,
+                name: product.name,
+                priceSale: product.priceSale,
+                price: product.price,
+                status: product.status,
+                colors: colors
+            };
+        });
+
+        const recordsets = [products];
+        const recordset = [...products];
+        const output = {};
+        const rowsAffected = [products.length];
+
+        const finalResult = {
+            recordsets: recordsets,
+            recordset: recordset,
+            output: output,
+            rowsAffected: rowsAffected
+        };
+
+        await sql.close();
+        res.json(finalResult);
+    } catch (err) {
+        console.error('Data download error:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 
 module.exports = router;

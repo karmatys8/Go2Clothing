@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import {useState, useEffect} from 'react';
+import {useParams} from "react-router-dom";
 
 import Box from '@mui/material/Box';
 import Radio from '@mui/material/Radio';
@@ -18,8 +19,7 @@ import StickyComponent from 'src/components/sticky-grid';
 // ----------------------------------------------------------------------
 
 export default function ProductPersonalization() {
-  const [selectedColor, setSelectedColor] = useState('');
-  const [selectedSizes, setSelectedSizes] = useState('');
+
   const product = { id: 0, color: '#000000', size: '0o0', amount: 1 }; // fetch from backend
 
   const { cartData, setCartData } = useCartContext();
@@ -38,6 +38,57 @@ export default function ProductPersonalization() {
       setCartData((currData) => [...currData, product]);
     }
   };
+
+  const { productId } = useParams();
+  const [selectedColor, setSelectedColor] = useState('Light Red');
+  const [selectedSizes, setSelectedSizes] = useState('');
+  const [seizesData, setSeizesData] = useState([]);
+  const [colorData, setColorData] = useState([]);
+  const [productName, setProductName] = useState();
+  const [productPrice, setProductPrice] = useState();
+
+      useEffect(() => {
+    const fetchSizesData = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/products/size/${productId}`);
+        const data = await response.json();
+        setSeizesData(data);
+      } catch (error) {
+        console.error('Error while fetching sizes:', error);
+      }
+    };
+    
+    fetchSizesData();
+  }, [productId]);
+
+    useEffect(() => {
+        const fetchColorData = async () => {
+            try {
+                const response = await fetch(`http://localhost:3000/products/colors/${productId}`);
+                const data = await response.json();
+                setColorData(data);
+            } catch (error) {
+                console.error('Error while fetching colors:', error);
+            }
+        };
+
+        fetchColorData();
+    }, [productId]);
+
+    useEffect(() => {
+        const fetchDetails = async () => {
+            try {
+                const response = await fetch(`http://localhost:3000/products/details/${productId}`);
+                const data = await response.json();
+                setProductName(data[0].ProductName);
+                setProductPrice(data[0].ProductPrice);
+            } catch (error) {
+                console.error('Error while fetching details:', error);
+            }
+        };
+        fetchDetails();
+    }, [productId, productName, productPrice]);
+
 
   const handleChangeColor = (event) => {
     setSelectedColor(event.target.value);
@@ -110,13 +161,13 @@ export default function ProductPersonalization() {
   return (
     <StickyComponent top={17.5} generalStyles={{ pb: 5 }} wideScreenStyles={{ pl: 10 }}>
       <Grid item xs={12}>
-        <Typography variant="h6" component="h2" sx={{ mb: 0.5 }}>
-          Product Name
+        <Typography variant="h4" component="h2" sx={{ mb: 0.5 }}>
+            {productName}
         </Typography>
       </Grid>
       <Grid item xs={12}>
         <Typography variant="h6" component="span" sx={{ mb: 3 }}>
-          Price
+            {productPrice}$
         </Typography>
       </Grid>
       <Grid item xs={6} md={12} sx={{ mb: 2.5 }} flex justifyContent="center">
@@ -139,53 +190,3 @@ export default function ProductPersonalization() {
     </StickyComponent>
   );
 }
-
-const colorData = [
-  {
-    id: 1,
-    colorHex: '#FF6666',
-    colorName: 'Light Red',
-  },
-  {
-    id: 2,
-    colorHex: '#66FF66',
-    colorName: 'Light Green',
-  },
-  {
-    id: 3,
-    colorHex: '#6666FF',
-    colorName: 'Light Blue',
-  },
-  {
-    id: 4,
-    colorHex: '#FFFF66',
-    colorName: 'Light Yellow',
-  },
-  {
-    id: 5,
-    colorHex: '#FF66FF',
-    colorName: 'Light Magenta',
-  },
-];
-
-const seizesData = [
-  'EU 36',
-  'EU 37',
-  'EU 38',
-  'EU 39',
-  'EU 40',
-  'EU 41',
-  'EU 42',
-  'EU 37',
-  'EU 38',
-  'EU 39',
-  'EU 40',
-  'EU 41',
-  'EU 42',
-  'EU 37',
-  'EU 38',
-  'EU 39',
-  'EU 40',
-  'EU 41',
-  'EU 42',
-];

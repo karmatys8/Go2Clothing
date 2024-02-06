@@ -1,4 +1,6 @@
 import * as React from 'react';
+import {useState, useEffect} from "react";
+import {useParams} from "react-router-dom";
 
 import Accordion from '@mui/material/Accordion';
 import Typography from '@mui/material/Typography';
@@ -9,7 +11,23 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 // ----------------------------------------------------------------------
 
 export default function ProductInfo() {
+  const { productId } = useParams();
   const [expanded, setExpanded] = React.useState(false);
+  const [productDescription, setProductDescription] = useState();
+
+  useEffect(() => {
+    const fetchSizesData = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/products/description/${productId}`);
+        const data = await response.json();
+        setProductDescription(data[0].ProductDescription);
+      } catch (error) {
+        console.error('Error while fetching sizes:', error);
+      }
+    };
+
+    fetchSizesData();
+  }, [productId]);
 
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -27,8 +45,7 @@ export default function ProductInfo() {
         </AccordionSummary>
         <AccordionDetails>
           <Typography>
-            Nulla facilisi. Phasellus sollicitudin nulla et quam mattis feugiat. Aliquam eget
-            maximus est, id dignissim quam.
+            {productDescription}
           </Typography>
         </AccordionDetails>
       </Accordion>
