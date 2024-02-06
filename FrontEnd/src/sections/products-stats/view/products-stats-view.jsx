@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 
 import { Container } from '@mui/material';
 import { Edit, Cancel, Delete } from '@mui/icons-material';
@@ -14,10 +14,9 @@ import EditToolbar from '../edit-toolbar';
 
 // ----------------------------------------------------------------------
 
-
 export default function ProductsStatsPage() {
-  const [rows, setRows] = React.useState({});
-  const [rowModesModel, setRowModesModel] = React.useState({});
+  const [rows, setRows] = useState([]);
+  const [rowModesModel, setRowModesModel] = useState({});
 
   const handleRowEditStop = (params, event) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
@@ -30,10 +29,7 @@ export default function ProductsStatsPage() {
   };
 
   const handleSaveClick = (id) => () => {
-
-    setRowModesModel({...rowModesModel, [id]: {mode: GridRowModes.View}});
-    // const editedRow = rows.find((row) => row.id === id);
-
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
   };
 
   const handleDeleteClick = (id) => () => {
@@ -53,7 +49,7 @@ export default function ProductsStatsPage() {
   };
 
   const processRowUpdate = async (newRow) => {
-    const updatedRow = {...newRow, isNew: false};
+    const updatedRow = { ...newRow, isNew: false };
     setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
 
     try {
@@ -62,7 +58,7 @@ export default function ProductsStatsPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updatedRow)
+        body: JSON.stringify(updatedRow),
       });
       if (response.ok) {
         console.log('Edited Successfully');
@@ -119,7 +115,6 @@ export default function ProductsStatsPage() {
       field: 'color',
       headerName: 'Color',
       width: 150,
-      editable: true,
       sortable: false,
       type: 'string',
     },
@@ -127,7 +122,6 @@ export default function ProductsStatsPage() {
       field: 'size',
       headerName: 'Size',
       width: 150,
-      editable: true,
       sortable: false,
       type: 'string',
     },
@@ -187,17 +181,16 @@ export default function ProductsStatsPage() {
     },
   ];
 
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch('http://localhost:3000/admin/products');
         if (response.ok) {
           const data = await response.json();
-          console.log(data[0]);
           setRows(data);
         }
       } catch (error) {
-        console.log('e', error);
+        console.error('Products fetching error: ', error);
       }
     };
 
@@ -222,7 +215,7 @@ export default function ProductsStatsPage() {
         }}
         initialState={{
           pagination: {
-            paginationModel: { page: 0, pageSize: 5 },
+            paginationModel: { page: 0, pageSize: 10 },
           },
         }}
         pageSizeOptions={[10, 25, 100]}
