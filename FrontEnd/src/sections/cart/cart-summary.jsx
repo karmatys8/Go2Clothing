@@ -1,16 +1,23 @@
+import { useState, useEffect } from 'react';
+
 import { Alert, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 
-import StickyComponent from 'src/components/sticky-grid';
+import { useCartContext } from 'src/contexts/use-cart-context';
 
-import { useCartContext } from './use-cart-context';
+import StickyComponent from 'src/components/sticky-grid';
 
 // ----------------------------------------------------------------------
 
 export default function CartSummary() {
-  const { totalPrice } = useCartContext();
+  const { cartData } = useCartContext();
   const freeShippingThreshold = 500;
   const shippingPrice = totalPrice >= freeShippingThreshold ? 0 : 100;
+  const [totalPrice, setTotalPrice] = useState(0);
+
+  useEffect(() => {
+    setTotalPrice(cartData.reduce((acc, item) => acc + item.price * item.amount, 0));
+  }, [cartData]);
 
   return (
     <StickyComponent top={9} spacing={1.5} wideScreenStyles={{ p: 5 }}>

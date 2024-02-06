@@ -1,47 +1,26 @@
 import PropTypes from 'prop-types';
 import { useMemo, useState, useEffect, useContext, createContext } from 'react';
 
-import { products } from 'src/_mock/products';
-
 // ----------------------------------------------------------------------
 
 const CartContext = createContext();
 
 export const CartContextProvider = ({ children }) => {
-  const [cartData, setCartData] = useState([{}]);
-  const [totalPrice, setTotalPrice] = useState(0);
+  const [cartData, setCartData] = useState([]);
 
   useEffect(() => {
-    setCartData(
-      products.map((product) => ({
-        ...product,
-        amount: 1 + Math.floor(Math.random() * 10),
-        inStock: 12 + Math.floor(Math.random() * 8),
-      }))
-    );
+    const storageData = localStorage.getItem('cartData');
+    if (storageData?.length) {
+      setCartData(JSON.parse(storageData));
+    }
   }, []);
-
-  useEffect(() => {
-    setTotalPrice(cartData.reduce((acc, item) => acc + item.price * item.amount, 0));
-  }, [cartData]);
-
-  const updateItem = useMemo(
-    () => (id, newAmount) => {
-      setCartData((currData) =>
-        currData.map((item) => (item.id === id ? { ...item, amount: newAmount } : item))
-      );
-    },
-    [setCartData]
-  );
 
   const contextValue = useMemo(
     () => ({
       cartData,
       setCartData,
-      totalPrice,
-      updateItem,
     }),
-    [cartData, setCartData, totalPrice, updateItem]
+    [cartData, setCartData]
   );
   return <CartContext.Provider value={contextValue}>{children}</CartContext.Provider>;
 };

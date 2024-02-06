@@ -18,7 +18,7 @@ import {
 
 import { fCurrency } from 'src/utils/format-number';
 
-import { useCartContext } from './use-cart-context';
+import { useCartContext } from 'src/contexts/use-cart-context';
 
 // ----------------------------------------------------------------------
 
@@ -26,7 +26,15 @@ export default function CartItem({ product }) {
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.up('sm'));
 
-  const { updateItem, setCartData } = useCartContext();
+  const { setCartData } = useCartContext();
+
+  const handleUpdate = (event) => {
+    setCartData((currData) =>
+      currData.map((item) =>
+        item.id === product.id ? { ...item, amount: event.target.value } : item
+      )
+    );
+  };
 
   const handleDelete = () => {
     setCartData((currData) => currData.filter((item) => item.id !== product.id));
@@ -55,7 +63,7 @@ export default function CartItem({ product }) {
         id="amount-select"
         label="Amount"
         value={product.amount}
-        onChange={(event) => updateItem(product.id, event.target.value)}
+        onChange={handleUpdate}
         size="small"
         MenuProps={{
           PaperProps: {

@@ -1,8 +1,9 @@
 import Stack from '@mui/material/Stack';
 import { Alert, Typography } from '@mui/material';
 
+import { useCartContext } from 'src/contexts/use-cart-context';
+
 import CartItem from './cart-item';
-import { useCartContext } from './use-cart-context';
 
 // ----------------------------------------------------------------------
 

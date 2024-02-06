@@ -11,13 +11,33 @@ import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 
+import { useCartContext } from 'src/contexts/use-cart-context';
+
 import StickyComponent from 'src/components/sticky-grid';
 
 // ----------------------------------------------------------------------
 
 export default function ProductPersonalization() {
-  const [selectedColor, setSelectedColor] = useState('Light Red');
+  const [selectedColor, setSelectedColor] = useState('');
   const [selectedSizes, setSelectedSizes] = useState('');
+  const product = { id: 0, color: '#000000', size: '0o0', amount: 1 }; // fetch from backend
+
+  const { cartData, setCartData } = useCartContext();
+
+  const handleAddToCart = () => {
+    const areProductsEqual = (item, product_) =>
+      item.id === product_.id && item.color === product_.color && item.size === product_.size;
+
+    if (cartData.some((item) => areProductsEqual(item, product))) {
+      setCartData((currData) =>
+        currData.map((item) =>
+          areProductsEqual(item, product) ? { ...item, amount: item.amount + product.amount } : item
+        )
+      );
+    } else {
+      setCartData((currData) => [...currData, product]);
+    }
+  };
 
   const handleChangeColor = (event) => {
     setSelectedColor(event.target.value);
@@ -111,6 +131,7 @@ export default function ProductPersonalization() {
           variant="contained"
           startIcon={<AddShoppingCartIcon />}
           sx={{ py: 1.5, width: '100%' }}
+          onClick={handleAddToCart}
         >
           Add to Cart
         </Button>
