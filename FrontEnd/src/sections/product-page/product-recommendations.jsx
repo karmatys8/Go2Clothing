@@ -7,8 +7,6 @@ import { Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-// import { products } from 'src/_mock/products';
-
 import ProductCard from 'src/components/product-card';
 
 // ----------------------------------------------------------------------
@@ -45,7 +43,6 @@ export default function ProductRecommendations() {
         setGroupedProducts(chunkArray(products, isDesktop ? 4 : 2));
       }, [isDesktop, products]);
 
-      // console.log(groupedProducts);
 
       return (
         <Box>
