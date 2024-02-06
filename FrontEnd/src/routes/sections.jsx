@@ -28,7 +28,8 @@ export default function Router() {
       ),
       children: [
         { element: <ProductsPage />, index: true },
-        { path: 'product-page', element: <SingleProductPage /> },
+        { path: 'product-page/:productId', element: <SingleProductPage /> },
+
         {
           path: 'user',
           element: (
