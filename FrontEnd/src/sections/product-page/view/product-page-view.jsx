@@ -22,11 +22,11 @@ export default function SingleProductView() {
                     <ProductPersonalization productId={productId}/>
                 </Grid>
                 <Grid item xs={12} md={8}>
-                    <ProductInfo />
+                    <ProductInfo productId={productId}/>
                 </Grid>
             </Grid>
 
-            <ProductRecommendations />
+            <ProductRecommendations productId={productId} />
         </Container>
     );
 }
