@@ -14,7 +14,7 @@ export const UserContextProvider = ({ children }) => {
       const token = localStorage.getItem('WDAI_Project_token');
       if (token) {
         const decoded = jwtDecode(token);
-        setUserData(decoded);
+        setUserData({...decoded, token});
       }
     }
   }, [userData]);
@@ -38,5 +38,7 @@ UserContextProvider.propTypes = {
     email: PropTypes.string.isRequired,
     firstName: PropTypes.string.isRequired,
     lastName: PropTypes.string.isRequired,
+    userId: PropTypes.number.isRequired,
+    token: PropTypes.string,
   }),
 };

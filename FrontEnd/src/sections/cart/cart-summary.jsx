@@ -1,23 +1,60 @@
 import { useState, useEffect } from 'react';
 
-import { Alert, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import { Alert, Button, Typography } from '@mui/material';
+import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
 
 import { useCartContext } from 'src/contexts/use-cart-context';
+import { useUserContext } from 'src/contexts/use-user-context';
 
 import StickyComponent from 'src/components/sticky-grid';
 
 // ----------------------------------------------------------------------
 
 export default function CartSummary() {
+  const { userData } = useUserContext();
   const { cartData } = useCartContext();
-  const freeShippingThreshold = 500;
-  const shippingPrice = totalPrice >= freeShippingThreshold ? 0 : 100;
+
   const [totalPrice, setTotalPrice] = useState(0);
+  const [shippingPrice, setShippingPrice] = useState(0);
+  const freeShippingThreshold = 500;
+
+  useEffect(() => {
+    setShippingPrice(!cartData.length || totalPrice >= freeShippingThreshold ? 0 : 100);
+  }, [totalPrice, cartData]);
 
   useEffect(() => {
     setTotalPrice(cartData.reduce((acc, item) => acc + item.price * item.amount, 0));
   }, [cartData]);
+
+  const handleCheckout = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/customer/newOrder', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userData.token}`,
+        },
+        body: {
+          CustomerID: userData.userId,
+          DeliveryDays: 2, // arbitrary number
+          Freight: shippingPrice,
+          OrderDetails: cartData.map((item) => ({
+            ProductID: item.id,
+            Color: item.color,
+            Size: item.size,
+            Quantity: item.amount,
+          })),
+        },
+      });
+
+      if (response.ok) {
+        console.info('Checkout successful'); // can be changed
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+    }
+  };
 
   return (
     <StickyComponent top={9} spacing={1.5} wideScreenStyles={{ p: 5 }}>
@@ -47,9 +84,18 @@ export default function CartSummary() {
       </Grid>
 
       <Grid item xs={12}>
-        <Alert severity="info" sx={{ mt: 4 }}>
-          {`Free shipping from $${freeShippingThreshold}`}
-        </Alert>
+        <Button
+          size="large"
+          variant="contained"
+          startIcon={<ShoppingCartCheckoutIcon />}
+          sx={{ py: 1.5, width: '100%', mt: 4 }}
+          onClick={handleCheckout}
+        >
+          Go to Checkout
+        </Button>
+      </Grid>
+      <Grid item xs={12}>
+        <Alert severity="info">{`Free shipping from $${freeShippingThreshold}`}</Alert>
       </Grid>
     </StickyComponent>
   );

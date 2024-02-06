@@ -46,7 +46,7 @@ export default function LoginView() {
         const data = await response.json();
 
         localStorage.setItem('WDAI_Project_token', data.token);
-        setUserData(data.user);
+        setUserData({...data.user, token: data.token});
 
         router.back();
       }
