@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 
 import TextField from '@mui/material/TextField';
 
@@ -11,16 +12,21 @@ EmailTextField.propTypes = {
 };
 
 export default function EmailTextField({ email, setEmail }) {
-  const [isValid, setIsValid] = useState('');
+  const [isValid, setIsValid] = useState(true);
+
+  const debounce = useDebouncedCallback(() => {
+    if (email) {
+      const emailRegExp = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+      setIsValid(emailRegExp.test(email));
+    } else {
+      setIsValid(true);
+    }
+  }, 500);
 
   const handleChange = (event) => {
     setEmail(event.target.value);
+    debounce();
   };
-
-  useEffect(() => {
-    const emailRegExp = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-    setIsValid(emailRegExp.test(email));
-  }, [email]);
 
   return (
     <TextField

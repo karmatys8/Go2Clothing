@@ -20,7 +20,7 @@ const navConfig = [
   },
   {
     title: 'cart',
-    path: '/path',
+    path: '/cart',
     role: ['customer'],
   },
   {
