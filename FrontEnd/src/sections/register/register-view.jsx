@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -27,6 +28,12 @@ export default function RegisterView() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  const [arePasswordsEqual, setArePasswordEqual] = useState(true);
+
+  const debounce = useDebouncedCallback(() => {
+    setArePasswordEqual(password === confirmPassword);
+  }, 500);
 
   const handleNameChange = (event) => {
     const { name, value } = event.target;
@@ -62,14 +69,20 @@ export default function RegisterView() {
 
         <EmailTextField email={email} setEmail={setEmail} />
 
-        <PasswordTextField name="password" label="Password" setState={setPassword} />
+        <PasswordTextField
+          name="password"
+          label="Password"
+          setState={setPassword}
+          additionalOnChangeFunction={debounce}
+        />
 
         <PasswordTextField
           name="confirmPassword"
           label="Confirm password"
           setState={setConfirmPassword}
-          error={password !== confirmPassword}
-          helperText={password !== confirmPassword ? 'Passwords do not match' : ''}
+          additionalOnChangeFunction={debounce}
+          error={!arePasswordsEqual}
+          helperText={`Passwords do ${arePasswordsEqual ? '' : 'not'} match`}
         />
       </Stack>
 
