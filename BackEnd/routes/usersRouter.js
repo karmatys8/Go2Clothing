@@ -7,7 +7,7 @@ const dbConfig = require("./db");
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const decodeTokenMiddleware = require('./verifyTokenMiddleware');
-
+router.use(cors());
 
 
 function validateName(name) {
