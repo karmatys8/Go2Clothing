@@ -44,7 +44,7 @@ export default function CartItem({ product }) {
     <Box
       component="img"
       alt={product.name}
-      src={product.cover}
+      src='https://storage.googleapis.com/wdai_images/Icons/noPhoto.jpg'
       sx={{
         top: 0,
         width: 1,
@@ -113,10 +113,10 @@ export default function CartItem({ product }) {
                 {product.name}
               </Link>
               <Typography variant="body2" noWrap>
-                Color: picked color
+                Color: {product.color}
               </Typography>
               <Typography variant="body2" noWrap>
-                Size: picked size
+                Size: {product.size}
               </Typography>
             </Box>
 

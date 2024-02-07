@@ -20,11 +20,19 @@ import StickyComponent from 'src/components/sticky-grid';
 
 export default function ProductPersonalization() {
 
-  const product = { id: 0, color: '#000000', size: '0o0', amount: 1 }; // fetch from backend
-
   const { cartData, setCartData } = useCartContext();
 
   const handleAddToCart = () => {
+
+    const product = {
+        id: productId,
+        color: selectedColor,
+        size: selectedSizes,
+        price: productPrice,
+        inStock: 2, // hardcoded for testing - to remove
+        amount: 1
+    };
+
     const areProductsEqual = (item, product_) =>
       item.id === product_.id && item.color === product_.color && item.size === product_.size;
 
@@ -40,14 +48,14 @@ export default function ProductPersonalization() {
   };
 
   const { productId } = useParams();
-  const [selectedColor, setSelectedColor] = useState('Light Red');
+  const [selectedColor, setSelectedColor] = useState('');
   const [selectedSizes, setSelectedSizes] = useState('');
   const [seizesData, setSeizesData] = useState([]);
   const [colorData, setColorData] = useState([]);
   const [productName, setProductName] = useState();
   const [productPrice, setProductPrice] = useState();
 
-      useEffect(() => {
+  useEffect(() => {
     const fetchSizesData = async () => {
       try {
         const response = await fetch(`http://localhost:3000/products/size/${productId}`);
@@ -72,7 +80,7 @@ export default function ProductPersonalization() {
             }
         };
 
-        fetchColorData();
+    fetchColorData();
     }, [productId]);
 
     useEffect(() => {

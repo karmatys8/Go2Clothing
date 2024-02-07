@@ -29,23 +29,32 @@ export default function CartSummary() {
 
   const handleCheckout = async () => {
     try {
+      // console.log("Products in the cart:", cartData);
+      // console.log("UserID: ", userData.userID);
+      //   console.log("Order details:", cartData.map((item) => ({
+      //       ProductID: item.id,
+      //       Color: item.color,
+      //       Size: item.size,
+      //       Quantity: item.amount,
+      //   })));
+      //   console.log("Shipping Price: ", shippingPrice);
       const response = await fetch('http://localhost:3000/customer/newOrder', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${userData.token}`,
         },
-        body: {
-          CustomerID: userData.userId,
-          DeliveryDays: 2, // arbitrary number
-          Freight: shippingPrice,
-          OrderDetails: cartData.map((item) => ({
-            ProductID: item.id,
-            Color: item.color,
-            Size: item.size,
-            Quantity: item.amount,
-          })),
-        },
+        body: JSON.stringify({
+            CustomerID: userData.userID,
+            DeliveryDays: 2,
+            Freight: shippingPrice,
+            OrderDetails: cartData.map((item) => ({
+                ProductID: item.id,
+                Color: item.color,
+                Size: item.size,
+                Quantity: item.amount,
+            })),
+        }),
       });
 
       if (response.ok) {
