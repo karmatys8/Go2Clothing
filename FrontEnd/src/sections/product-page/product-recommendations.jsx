@@ -16,15 +16,11 @@ export default function ProductRecommendations() {
     const isDesktop = useMediaQuery((theme) => theme.breakpoints.up('md'));
     const [groupedProducts, setGroupedProducts] = useState([]);
     const [products, setProducts] = useState([]);
-    const offset = 0;
-    const rowCount = 4;
-
-    console.log(products);
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await fetch(`http://localhost:3000/products/${offset}/${rowCount}/${productId}`);
+                const response = await fetch(`http://localhost:3000/products/recommendations/${productId}`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -58,8 +54,8 @@ export default function ProductRecommendations() {
           >
             {groupedProducts.map((productList, i) => (
               <Grid container spacing={2} key={i}>
-                {productList.map((product, idx) => (
-                  <Grid item xs={6} md={3} key={idx}>
+                {productList.map((product) => (
+                  <Grid item xs={6} md={3} key={product.id}>
                       <Link to={`/product-page/${product.id}`} style={{ textDecoration: 'none' }}>
                           <ProductCard product={product} key={product.id} />
                       </Link>

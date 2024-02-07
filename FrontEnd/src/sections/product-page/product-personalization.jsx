@@ -22,8 +22,9 @@ export default function ProductPersonalization() {
   const [selectedSizes, setSelectedSizes] = useState('');
   const [seizesData, setSeizesData] = useState([]);
   const [colorData, setColorData] = useState([]);
-  const [productName, setProductName] = useState();
-  const [productPrice, setProductPrice] = useState();
+  const [productName, setProductName] = useState("");
+  const [productPrice, setProductPrice] = useState(0.0); // double
+
 
       useEffect(() => {
     const fetchSizesData = async () => {
@@ -35,7 +36,7 @@ export default function ProductPersonalization() {
         console.error('Error while fetching sizes:', error);
       }
     };
-    
+
     fetchSizesData();
   }, [productId]);
 
@@ -58,8 +59,8 @@ export default function ProductPersonalization() {
             try {
                 const response = await fetch(`http://localhost:3000/products/details/${productId}`);
                 const data = await response.json();
-                setProductName(data[0].ProductName);
-                setProductPrice(data[0].ProductPrice);
+                setProductName(data.ProductName);
+                setProductPrice(data.ProductPrice);
             } catch (error) {
                 console.error('Error while fetching details:', error);
             }

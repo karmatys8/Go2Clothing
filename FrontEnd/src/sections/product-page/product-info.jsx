@@ -20,9 +20,9 @@ export default function ProductInfo() {
       try {
         const response = await fetch(`http://localhost:3000/products/description/${productId}`);
         const data = await response.json();
-        setProductDescription(data[0].ProductDescription);
+        setProductDescription(data.ProductDescription);
       } catch (error) {
-        console.error('Error while fetching sizes:', error);
+        console.error('Error while fetching description:', error);
       }
     };
 
@@ -59,8 +59,8 @@ export default function ProductInfo() {
         </AccordionSummary>
         <AccordionDetails>
           <Typography>
-            Donec placerat, lectus sed mattis semper, neque lectus feugiat lectus, varius pulvinar
-            diam eros in elit. Pellentesque convallis laoreet laoreet.
+            Our shipping and payment options ensure convenience and speed, with delivery typically ranging from 2 to 7
+            business days.
           </Typography>
         </AccordionDetails>
       </Accordion>
@@ -74,8 +74,8 @@ export default function ProductInfo() {
         </AccordionSummary>
         <AccordionDetails>
           <Typography>
-            Nunc vitae orci ultricies, auctor nunc in, volutpat nisl. Integer sit amet egestas eros,
-            vitae egestas augue. Duis vel est augue.
+            Our return policy offers a generous window of 30 days, allowing you to shop with confidence and return items
+            if they do not meet your expectations.
           </Typography>
         </AccordionDetails>
       </Accordion>

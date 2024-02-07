@@ -12,7 +12,7 @@ module.exports = {
     },
     connectionTimeout: 150000,
     pool: {
-        max: 10,
+        max: 20,
         min: 0,
         idleTimeoutMillis: 30000,
     },
