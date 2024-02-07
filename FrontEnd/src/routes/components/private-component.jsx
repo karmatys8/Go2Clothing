@@ -16,7 +16,7 @@ const PrivateComponent = ({ component: Component, allowedRoles }) => {
   );
 
   // if user is not logged in go to login page
-  return userData?.role ? redirectComponent : <Navigate to="/login" replace />;
+  return userData?.role ? redirectComponent : <Navigate to="/login" />;
 };
 
 export default PrivateComponent;

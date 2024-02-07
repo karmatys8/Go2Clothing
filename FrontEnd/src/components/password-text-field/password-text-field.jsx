@@ -15,13 +15,22 @@ PasswordTextField.propTypes = {
   setState: PropTypes.func.isRequired,
   error: PropTypes.bool,
   helperText: PropTypes.string,
+  additionalOnChangeFunction: PropTypes.func,
 };
 
-export default function PasswordTextField({ name, label, setState, error, helperText }) {
+export default function PasswordTextField({
+  name,
+  label,
+  setState,
+  error,
+  helperText,
+  additionalOnChangeFunction,
+}) {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (event) => {
     setState(event.target.value);
+    if (typeof additionalOnChangeFunction === 'function') additionalOnChangeFunction();
   };
 
   return (
