@@ -1,5 +1,5 @@
-import {Link} from "react-router-dom";
-import {useState, useEffect} from 'react';
+import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
@@ -20,24 +20,22 @@ export default function ProductsView() {
   const from = 0;
   const offset = 12;
 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/products/${from}/${offset}`);
 
-    useEffect(() => {
-      const fetchProducts = async () => {
-          try {
-              const response = await fetch(`http://localhost:3000/products/${from}/${offset}`);
-              if (!response.ok) {
-                  throw new Error('Network response was not ok');
-              }
-              const data = await response.json();
+        if (response.ok) {
+          const data = await response.json();
+          setProducts(data.recordset);
+        } else throw new Error('Network response was not ok');
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
 
-              setProducts(data.recordset);
-          } catch (error) {
-              console.error('Error fetching products:', error);
-          }
-      };
-
-      fetchProducts();
-    }, [products]);
+    fetchProducts();
+  }, []);
 
   const handleOpenFilter = () => {
     setOpenFilter(true);
@@ -74,9 +72,9 @@ export default function ProductsView() {
       <Grid container spacing={3}>
         {products.map((product) => (
           <Grid key={product.id} xs={12} sm={6} md={3}>
-              <Link to={`/product-page/${product.id}`} style={{ textDecoration: 'none' }}>
-                  <ProductCard product={product} />
-              </Link>
+            <Link to={`/product-page/${product.id}`} style={{ textDecoration: 'none' }}>
+              <ProductCard product={product} />
+            </Link>
           </Grid>
         ))}
       </Grid>

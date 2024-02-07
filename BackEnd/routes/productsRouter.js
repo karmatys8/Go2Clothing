@@ -185,10 +185,11 @@ router.get('/details/:id',async (req, res) => {
         if (result.recordset.length === 0) {
             return res.status(404).json({ error: 'Product not found.' });
         }
-        const details = result.recordset.map((record) => ({
-            ProductName: record.ProductName,
-            ProductPrice: record.ProductPrice,
-        }));
+        const details = {
+            ProductName: result.recordset[0].ProductName,
+            ProductPrice: result.recordset[0].ProductPrice,
+            SalePrice: result.recordset[0].SalePrice
+        };
         res.status(200).json(details);
     } catch (err) {
         console.error('Error while fetching images:', err);
@@ -200,20 +201,64 @@ router.get('/description/:id',async (req, res) => {
     const productId = req.params.id;
     try {
         await sql.connect(dbConfig);
-        const result = await sql.query`EXEC GetPescriptionByProductID @ProductId = ${productId}`;
+        const result = await sql.query`EXEC GetDescriptionByProductID @ProductId = ${productId}`;
         await sql.close();
         if (result.recordset.length === 0) {
             return res.status(404).json({ error: 'Product not found.' });
         }
-        const details = result.recordset.map((record) => ({
-            ProductDescription: record.ProductDescription,
-        }));
+        const details = {
+            ProductDescription: result.recordset[0].ProductDescription
+        };
         res.status(200).json(details);
     } catch (err) {
         console.error('Error while fetching images:', err);
         res.status(500).send('An error occurred while fetching description:' + err.message);
     }
 });
+
+
+router.get('/recommendations/:productId', async (req, res) => {
+    const productId = req.params.productId;
+
+    try {
+        await sql.connect(dbConfig);
+        const result = await sql.query(`
+            EXEC GetMainProductDetails3 ${productId}
+            `);
+        let products = result.recordset;
+
+        products = products.map(product => {
+            const colors = product.colors ? product.colors.split(",") : [];
+            return {
+                cover: product.cover,
+                id: product.id,
+                name: product.name,
+                priceSale: product.priceSale,
+                price: product.price,
+                status: product.status,
+                colors: colors
+            };
+        });
+
+        const recordsets = [products];
+        const recordset = [...products];
+        const output = {};
+        const rowsAffected = [products.length];
+
+        const finalResult = {
+            recordsets: recordsets,
+            recordset: recordset,
+            output: output,
+            rowsAffected: rowsAffected
+        };
+        await sql.close();
+        res.json(finalResult);
+    } catch (err) {
+        console.error('Data download error:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 
 router.get('/:from/:offset', async (req, res) => {
     const from = req.params.from;
@@ -259,50 +304,6 @@ router.get('/:from/:offset', async (req, res) => {
     }
 });
 
-router.get('/:offset/:rowCount/:productId', async (req, res) => {
-    const productId = req.params.productId;
-    const offset = req.params.offset;
-    const rowCount = req.params.rowCount;
-
-    try {
-        await sql.connect(dbConfig);
-        const result = await sql.query(`
-            EXEC GetMainProductDetails3 ${offset}, ${rowCount}, ${productId}
-            `);
-        let products = result.recordset;
-
-        products = products.map(product => {
-            const colors = product.colors ? product.colors.split(",") : [];
-            return {
-                cover: product.cover,
-                id: product.id,
-                name: product.name,
-                priceSale: product.priceSale,
-                price: product.price,
-                status: product.status,
-                colors: colors
-            };
-        });
-
-        const recordsets = [products];
-        const recordset = [...products];
-        const output = {};
-        const rowsAffected = [products.length];
-
-        const finalResult = {
-            recordsets: recordsets,
-            recordset: recordset,
-            output: output,
-            rowsAffected: rowsAffected
-        };
-
-        await sql.close();
-        res.json(finalResult);
-    } catch (err) {
-        console.error('Data download error:', err);
-        res.status(500).json({ error: err.message });
-    }
-});
 
 
 module.exports = router;

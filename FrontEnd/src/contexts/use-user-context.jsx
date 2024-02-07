@@ -7,17 +7,22 @@ import { useMemo, useState, useEffect, useContext, createContext } from 'react';
 const UserContext = createContext();
 
 export const UserContextProvider = ({ children }) => {
-  const [userData, setUserData] = useState({});
+  const [userData, setUserData] = useState(() => {
+    const token = localStorage.getItem('WDAI_Project_token');
+    if (token) {
+      const decoded = jwtDecode(token);
+      return decoded;
+    }
+    return {};
+  });
 
   useEffect(() => {
-    if (userData !== null && Object.keys(userData).length === 0) {
-      const token = localStorage.getItem('WDAI_Project_token');
-      if (token) {
-        const decoded = jwtDecode(token);
-        setUserData({...decoded, token});
-      }
+    const token = localStorage.getItem('WDAI_Project_token');
+    if (token) {
+      const decoded = jwtDecode(token);
+      setUserData(decoded);
     }
-  }, [userData]);
+  }, []);
 
   const contextValue = useMemo(
     () => ({
