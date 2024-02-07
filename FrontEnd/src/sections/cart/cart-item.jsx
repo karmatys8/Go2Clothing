@@ -37,7 +37,7 @@ export default function CartItem({ product }) {
   };
 
   const handleDelete = () => {
-    setCartData((currData) => currData.filter((item) => item.id !== product.id));
+    setCartData((currData) => currData.filter((item) => item.id !== product.id && item.color !== product.color && item.size !== product.size));
   };
 
   const renderImg = (

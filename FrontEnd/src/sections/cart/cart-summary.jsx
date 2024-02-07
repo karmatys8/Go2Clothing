@@ -24,20 +24,11 @@ export default function CartSummary() {
   }, [totalPrice, cartData]);
 
   useEffect(() => {
-    setTotalPrice(cartData.reduce((acc, item) => acc + item.price * item.amount, 0));
+    setTotalPrice(parseFloat(cartData.reduce((acc, item) => acc + item.price * item.amount, 0).toFixed(2)));
   }, [cartData]);
 
   const handleCheckout = async () => {
     try {
-      // console.log("Products in the cart:", cartData);
-      // console.log("UserID: ", userData.userID);
-      //   console.log("Order details:", cartData.map((item) => ({
-      //       ProductID: item.id,
-      //       Color: item.color,
-      //       Size: item.size,
-      //       Quantity: item.amount,
-      //   })));
-      //   console.log("Shipping Price: ", shippingPrice);
       const response = await fetch('http://localhost:3000/customer/newOrder', {
         method: 'POST',
         headers: {
@@ -45,15 +36,15 @@ export default function CartSummary() {
           Authorization: `Bearer ${userData.token}`,
         },
         body: JSON.stringify({
-            CustomerID: userData.userID,
-            DeliveryDays: 2,
-            Freight: shippingPrice,
-            OrderDetails: cartData.map((item) => ({
-                ProductID: item.id,
-                Color: item.color,
-                Size: item.size,
-                Quantity: item.amount,
-            })),
+          CustomerID: userData.userID,
+          DeliveryDays: 2,
+          Freight: shippingPrice,
+          OrderDetails: cartData.map((item) => ({
+            ProductID: item.id,
+            Color: item.color,
+            Size: item.size,
+            Quantity: item.amount,
+          })),
         }),
       });
 
@@ -89,7 +80,7 @@ export default function CartSummary() {
         sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
       >
         <Typography variant="h5">To pay</Typography>
-        <Typography variant="h5">{`$${totalPrice + shippingPrice}`}</Typography>
+        <Typography variant="h5">{`$${parseFloat(totalPrice + shippingPrice).toFixed(2)}`}</Typography>
       </Grid>
 
       <Grid item xs={12}>

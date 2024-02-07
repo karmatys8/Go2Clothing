@@ -26,6 +26,7 @@ export default function ProductPersonalization({ productId }) {
   const handleAddToCart = () => {
     const product = {
       id: productId,
+      name: productName,
       color: selectedColor,
       size: selectedSizes,
       price: productPrice,
@@ -34,7 +35,7 @@ export default function ProductPersonalization({ productId }) {
     };
 
     const areProductsEqual = (item, product_) =>
-      item.id === product_.id && item.color === product_.color && item.size === product_.size;
+      item.id === product_.id || item.color === product_.color || item.size === product_.size;
 
     if (cartData.some((item) => areProductsEqual(item, product))) {
       setCartData((currData) =>
