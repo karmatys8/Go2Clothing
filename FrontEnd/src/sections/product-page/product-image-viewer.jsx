@@ -1,4 +1,4 @@
-import {useParams} from "react-router-dom";
+import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 
 import ImageList from '@mui/material/ImageList';
@@ -27,9 +27,7 @@ const pickedImageStyles = {
   zIndex: 20,
 };
 
-export default function ProductImages() {
-  const { productId } = useParams();
-
+export default function ProductImageViewer({ productId }) {
   const [imageIndex, setImageIndex] = useState(0);
   const [isVisible, setIsVisible, fadeProps] = useFade();
   const [productImages, setProductImages] = useState([]);
@@ -107,3 +105,7 @@ export default function ProductImages() {
     </Grid>
   );
 }
+
+ProductImageViewer.propTypes = {
+  productId: PropTypes.number.isRequired,
+};

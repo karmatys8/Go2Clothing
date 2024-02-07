@@ -14,11 +14,6 @@ const navConfig = [
     role: 'all',
   },
   {
-    title: 'product-page',
-    path: '/product-page',
-    role: 'all',
-  },
-  {
     title: 'user',
     path: '/user',
     icon: icon('ic_user'),
@@ -33,6 +28,12 @@ const navConfig = [
   {
     title: 'login',
     path: '/login',
+    icon: icon('ic_lock'),
+    role: 'all',
+  },
+  {
+    title: 'register',
+    path: '/register',
     icon: icon('ic_lock'),
     role: 'all',
   },

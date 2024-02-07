@@ -188,6 +188,7 @@ router.get('/details/:id',async (req, res) => {
         const details = {
             ProductName: result.recordset[0].ProductName,
             ProductPrice: result.recordset[0].ProductPrice,
+            SalePrice: result.recordset[0].SalePrice
         };
         res.status(200).json(details);
     } catch (err) {
