@@ -6,14 +6,11 @@ import { useMemo, useState, useEffect, useContext, createContext } from 'react';
 const CartContext = createContext();
 
 export const CartContextProvider = ({ children }) => {
-  const [cartData, setCartData] = useState([]);
+  const [cartData, setCartData] = useState(() => JSON.parse(localStorage.getItem('cartData')) || []);
 
   useEffect(() => {
-    const storageData = localStorage.getItem('cartData');
-    if (storageData?.length) {
-      setCartData(JSON.parse(storageData));
-    }
-  }, []);
+    localStorage.setItem('cartData', JSON.stringify(cartData));
+  }, [cartData]);
 
   const contextValue = useMemo(
     () => ({

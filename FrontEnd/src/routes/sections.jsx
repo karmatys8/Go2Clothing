@@ -32,7 +32,7 @@ export default function Router() {
 
         {
           path: 'cart',
-          element: <PrivateComponent component={<CartPage />} allowedRoles={['customer']} />,
+          element: <PrivateComponent component={<CartPage />} allowedRoles={['customer', 'admin']} />,
         },
         {
           path: 'products-stats',

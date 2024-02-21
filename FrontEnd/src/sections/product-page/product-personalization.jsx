@@ -20,7 +20,7 @@ import StickyComponent from 'src/components/sticky-grid';
 
 // ----------------------------------------------------------------------
 
-export default function ProductPersonalization({ productId }) {
+export default function ProductPersonalization({ productId, labelImage }) {
   const { cartData, setCartData } = useCartContext();
 
   const handleAddToCart = () => {
@@ -32,10 +32,11 @@ export default function ProductPersonalization({ productId }) {
       price: productPrice,
       inStock: 11, // hardcoded for testing - to remove
       amount: 1,
+      img: labelImage,
     };
-
+    console.log(labelImage);
     const areProductsEqual = (item, product_) =>
-      item.id === product_.id || item.color === product_.color || item.size === product_.size;
+      item.id === product_.id && item.color === product_.color && item.size === product_.size;
 
     if (cartData.some((item) => areProductsEqual(item, product))) {
       setCartData((currData) =>
@@ -186,29 +187,30 @@ export default function ProductPersonalization({ productId }) {
 
   return (
     <StickyComponent top={17.5} generalStyles={{ pb: 5 }} wideScreenStyles={{ pl: 10 }}>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <Typography variant="h4" component="h2" sx={{ mb: 0.5 }}>
           {productName}
         </Typography>
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <Typography variant="h6" component="span" sx={{ mb: 3 }}>
           {renderPrice}
         </Typography>
       </Grid>
-      <Grid item xs={6} md={12} sx={{ mb: 2.5 }} flex justifyContent="center">
+      <Grid xs={6} md={12} sx={{ mb: 2.5 }} flex justifyContent="center">
         {renderColorPicker}
       </Grid>
-      <Grid item xs={6} md={12}>
+      <Grid xs={6} md={12}>
         {renderSizePicker}
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <Button
           component="label"
           variant="contained"
           startIcon={<AddShoppingCartIcon />}
           sx={{ py: 1.5, width: '100%' }}
           onClick={handleAddToCart}
+          disabled={!(selectedColor && selectedSizes)}
         >
           Add to Cart
         </Button>
@@ -218,5 +220,6 @@ export default function ProductPersonalization({ productId }) {
 }
 
 ProductPersonalization.propTypes = {
-  productId: PropTypes.number.isRequired,
+  productId: PropTypes.string.isRequired,
+  labelImage: PropTypes.string,
 };

@@ -10,10 +10,10 @@ export default function CartView() {
   return (
     <Container sx={{ mb: 5 }}>
       <Grid container>
-        <Grid item xs={12} md={8}>
+        <Grid xs={12} md={8}>
           <CartItemsList />
         </Grid>
-        <Grid xs={12} md={4} item>
+        <Grid xs={12} md={4}>
           <CartSummary />
         </Grid>
       </Grid>

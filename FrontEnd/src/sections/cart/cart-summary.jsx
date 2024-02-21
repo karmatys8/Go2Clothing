@@ -24,7 +24,9 @@ export default function CartSummary() {
   }, [totalPrice, cartData]);
 
   useEffect(() => {
-    setTotalPrice(parseFloat(cartData.reduce((acc, item) => acc + item.price * item.amount, 0).toFixed(2)));
+    setTotalPrice(
+      parseFloat(cartData.reduce((acc, item) => acc + item.price * item.amount, 0).toFixed(2))
+    );
   }, [cartData]);
 
   const handleCheckout = async () => {
@@ -58,32 +60,22 @@ export default function CartSummary() {
 
   return (
     <StickyComponent top={9} spacing={1.5} wideScreenStyles={{ p: 5 }}>
-      <Grid
-        item
-        xs={12}
-        sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
-      >
+      <Grid xs={12} sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         <Typography variant="subtitle1">Products cost</Typography>
         <Typography variant="subtitle1">{`$${totalPrice}`}</Typography>
       </Grid>
-      <Grid
-        item
-        xs={12}
-        sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
-      >
+      <Grid xs={12} sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         <Typography variant="subtitle1">Shipping</Typography>
         <Typography variant="subtitle1">{`$${shippingPrice}`}</Typography>
       </Grid>
-      <Grid
-        item
-        xs={12}
-        sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
-      >
+      <Grid xs={12} sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         <Typography variant="h5">To pay</Typography>
-        <Typography variant="h5">{`$${parseFloat(totalPrice + shippingPrice).toFixed(2)}`}</Typography>
+        <Typography variant="h5">
+          {`$${parseFloat(totalPrice + shippingPrice).toFixed(2)}`}
+        </Typography>
       </Grid>
 
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <Button
           size="large"
           variant="contained"
@@ -94,7 +86,7 @@ export default function CartSummary() {
           Go to Checkout
         </Button>
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <Alert severity="info">{`Free shipping from $${freeShippingThreshold}`}</Alert>
       </Grid>
     </StickyComponent>

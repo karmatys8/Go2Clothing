@@ -31,20 +31,27 @@ export default function CartItem({ product }) {
   const handleUpdate = (event) => {
     setCartData((currData) =>
       currData.map((item) =>
-        item.id === product.id ? { ...item, amount: event.target.value } : item
+        item.id === product.id && item.color === product.color && item.size === product.size
+          ? { ...item, amount: event.target.value }
+          : item
       )
     );
   };
 
   const handleDelete = () => {
-    setCartData((currData) => currData.filter((item) => item.id !== product.id && item.color !== product.color && item.size !== product.size));
+    setCartData((currData) =>
+      currData.filter(
+        (item) =>
+          !(item.id === product.id && item.color === product.color && item.size === product.size)
+      )
+    );
   };
 
   const renderImg = (
     <Box
       component="img"
       alt={product.name}
-      src='https://storage.googleapis.com/wdai_images/Icons/noPhoto.jpg'
+      src={product.img || 'https://storage.googleapis.com/wdai_images/Icons/noPhoto.jpg'}
       sx={{
         top: 0,
         width: 1,

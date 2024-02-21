@@ -62,7 +62,7 @@ export default function ProductRecommendations({ productId }) {
         {groupedProducts.map((productList, i) => (
           <Grid container spacing={2} key={i}>
             {productList.map((product) => (
-              <Grid item xs={6} md={3} key={product.id}>
+              <Grid xs={6} md={3} key={product.id}>
                 <Link to={`/product-page/${product.id}`} style={{ textDecoration: 'none' }}>
                   <ProductCard product={product} key={product.id} />
                 </Link>
@@ -76,5 +76,5 @@ export default function ProductRecommendations({ productId }) {
 }
 
 ProductRecommendations.propTypes = {
-  productId: PropTypes.number.isRequired,
+  productId: PropTypes.string.isRequired,
 };
