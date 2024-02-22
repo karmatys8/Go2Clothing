@@ -5,7 +5,7 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { fCurrency } from 'src/utils/format-number';
+import PriceComponent from 'src/layouts/dashboard/common/price';
 
 import Label from 'src/components/label';
 import { ColorPreview } from 'src/components/color-utils';
@@ -44,23 +44,6 @@ export default function ShopProductCard({ product }) {
     />
   );
 
-  const renderPrice = (
-    <Typography variant="subtitle1">
-      <Typography
-        component="span"
-        variant="body1"
-        sx={{
-          color: 'text.disabled',
-          textDecoration: 'line-through',
-        }}
-      >
-        {product.priceSale && fCurrency(product.price)}
-      </Typography>
-      &nbsp;
-      {fCurrency(product?.priceSale || product.price)}
-    </Typography>
-  );
-
   return (
     <Card>
       <Box sx={{ pt: '100%', position: 'relative' }}>
@@ -84,7 +67,7 @@ export default function ShopProductCard({ product }) {
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <ColorPreview colors={product.colors} />
-          {renderPrice}
+          <PriceComponent saleProductPrice={product.priceSale} productPrice={product.price} />
         </Stack>
       </Stack>
     </Card>

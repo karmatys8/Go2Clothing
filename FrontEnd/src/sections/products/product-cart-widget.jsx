@@ -39,7 +39,7 @@ export default function CartWidget() {
   const [itemsAmount, setItemsAmount] = useState(0);
 
   useEffect(() => {
-    setItemsAmount(cartData.reduce((acc, item) => acc + item.amount, 0));
+    setItemsAmount(cartData.reduce((acc, item) => acc + parseInt(item.amount, 10), 0));
   }, [cartData]);
 
   return (

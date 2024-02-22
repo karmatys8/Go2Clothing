@@ -12,9 +12,8 @@ import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 
-import { fCurrency } from 'src/utils/format-number';
-
 import { useCartContext } from 'src/contexts/use-cart-context';
+import PriceComponent from 'src/layouts/dashboard/common/price';
 
 import StickyComponent from 'src/components/sticky-grid';
 
@@ -30,11 +29,11 @@ export default function ProductPersonalization({ productId, labelImage }) {
       color: selectedColor,
       size: selectedSizes,
       price: productPrice,
-      inStock: 11, // hardcoded for testing - to remove
+      salePrice: saleProductPrice,
       amount: 1,
       img: labelImage,
     };
-    console.log(labelImage);
+
     const areProductsEqual = (item, product_) =>
       item.id === product_.id && item.color === product_.color && item.size === product_.size;
 
@@ -168,23 +167,6 @@ export default function ProductPersonalization({ productId, labelImage }) {
     </>
   );
 
-  const renderPrice = (
-    <Typography variant="subtitle1">
-      <Typography
-        component="span"
-        variant="body1"
-        sx={{
-          color: 'text.disabled',
-          textDecoration: 'line-through',
-        }}
-      >
-        {saleProductPrice && fCurrency(productPrice)}
-      </Typography>
-      &nbsp;
-      {fCurrency(saleProductPrice || productPrice)}
-    </Typography>
-  );
-
   return (
     <StickyComponent top={17.5} generalStyles={{ pb: 5 }} wideScreenStyles={{ pl: 10 }}>
       <Grid xs={12}>
@@ -194,7 +176,7 @@ export default function ProductPersonalization({ productId, labelImage }) {
       </Grid>
       <Grid xs={12}>
         <Typography variant="h6" component="span" sx={{ mb: 3 }}>
-          {renderPrice}
+          <PriceComponent saleProductPrice={saleProductPrice} productPrice={productPrice} />
         </Typography>
       </Grid>
       <Grid xs={6} md={12} sx={{ mb: 2.5 }} flex justifyContent="center">

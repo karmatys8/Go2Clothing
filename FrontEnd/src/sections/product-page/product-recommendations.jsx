@@ -52,13 +52,7 @@ export default function ProductRecommendations({ productId }) {
       <Typography variant="h4" sx={{ pb: 2 }}>
         More from this category:
       </Typography>
-      <Carousel
-        autoPlay={false}
-        animation="slide"
-        indicators={false}
-        navButtonsAlwaysVisible
-        cycleNavigation={false}
-      >
+      <Carousel autoPlay={false} indicators={false} navButtonsAlwaysVisible cycleNavigation={false}>
         {groupedProducts.map((productList, i) => (
           <Grid container spacing={2} key={i}>
             {productList.map((product) => (

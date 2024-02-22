@@ -6,19 +6,10 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import DeleteIcon from '@mui/icons-material/Delete';
-import {
-  Select,
-  Button,
-  MenuItem,
-  useTheme,
-  InputLabel,
-  FormControl,
-  useMediaQuery,
-} from '@mui/material';
-
-import { fCurrency } from 'src/utils/format-number';
+import { Button, useTheme, TextField, FormControl, useMediaQuery } from '@mui/material';
 
 import { useCartContext } from 'src/contexts/use-cart-context';
+import PriceComponent from 'src/layouts/dashboard/common/price';
 
 // ----------------------------------------------------------------------
 
@@ -62,48 +53,19 @@ export default function CartItem({ product }) {
     />
   );
 
-  const renderSelect = (
+  const renderInput = (
     <FormControl sx={{ width: 75 }}>
-      <InputLabel id="amount-select-label">Amount</InputLabel>
-      <Select
-        labelId="amount-select-label"
-        id="amount-select"
+      <TextField
+        id={`amount-input-${product.id}-${product.color}-${product.size}`}
         label="Amount"
+        type="number"
+        size="small"
         value={product.amount}
         onChange={handleUpdate}
-        size="small"
-        MenuProps={{
-          PaperProps: {
-            style: {
-              maxHeight: 300,
-            },
-          },
-        }}
-      >
-        {Array.from({ length: product.inStock }, (_, idx) => idx + 1).map((index) => (
-          <MenuItem value={index} key={index}>
-            {index}
-          </MenuItem>
-        ))}
-      </Select>
+        InputLabelProps={{ shrink: true }}
+        inputProps={{ min: 0 }}
+      />
     </FormControl>
-  );
-
-  const renderPrice = (
-    <Typography variant="subtitle1">
-      <Typography
-        component="span"
-        variant="body1"
-        sx={{
-          color: 'text.disabled',
-          textDecoration: 'line-through',
-        }}
-      >
-        {product.priceSale && fCurrency(product.priceSale)}
-      </Typography>
-      &nbsp;
-      {fCurrency(product.price)}
-    </Typography>
   );
 
   return (
@@ -120,14 +82,14 @@ export default function CartItem({ product }) {
                 {product.name}
               </Link>
               <Typography variant="body2" noWrap>
-                Color: {product.color}
+                {`Color: ${product.color}`}
               </Typography>
               <Typography variant="body2" noWrap>
-                Size: {product.size}
+                {`Size: ${product.size}`}
               </Typography>
             </Box>
 
-            {renderSelect}
+            {renderInput}
           </Stack>
         </Stack>
 
@@ -140,7 +102,7 @@ export default function CartItem({ product }) {
           <Button startIcon={<DeleteIcon />} color="error" onClick={handleDelete} size="small">
             Delete
           </Button>
-          {renderPrice}
+          <PriceComponent saleProductPrice={product.salePrice} productPrice={product.price} />
         </Stack>
       </Stack>
     </Card>

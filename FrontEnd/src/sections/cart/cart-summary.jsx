@@ -25,7 +25,7 @@ export default function CartSummary() {
 
   useEffect(() => {
     setTotalPrice(
-      parseFloat(cartData.reduce((acc, item) => acc + item.price * item.amount, 0).toFixed(2))
+      cartData.reduce((acc, item) => acc + (item.salePrice || item.price) * item.amount, 0)
     );
   }, [cartData]);
 
@@ -62,7 +62,7 @@ export default function CartSummary() {
     <StickyComponent top={9} spacing={1.5} wideScreenStyles={{ p: 5 }}>
       <Grid xs={12} sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         <Typography variant="subtitle1">Products cost</Typography>
-        <Typography variant="subtitle1">{`$${totalPrice}`}</Typography>
+        <Typography variant="subtitle1">{`$${parseFloat(totalPrice).toFixed(2)}`}</Typography>
       </Grid>
       <Grid xs={12} sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         <Typography variant="subtitle1">Shipping</Typography>
