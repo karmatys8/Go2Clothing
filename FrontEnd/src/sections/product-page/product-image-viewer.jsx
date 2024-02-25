@@ -27,9 +27,8 @@ const pickedImageStyles = {
   zIndex: 20,
 };
 
-export default function ProductImageViewer({ productId }) {
+export default function ProductImageViewer({ productId, productImages, setProductImages }) {
   const [imageIndex, setImageIndex] = useState(0);
-  const [productImages, setProductImages] = useState([]);
 
   const isSm = useResponsive('up', 'sm');
   const isMd = useResponsive('up', 'md');
@@ -54,7 +53,7 @@ export default function ProductImageViewer({ productId }) {
     };
 
     fetchProductImages();
-  }, [productId]);
+  }, [productId, setProductImages]);
 
   const handlePrevImage = () => {
     setImageIndex((imageIndex - 1 + productImages.length) % productImages.length);
@@ -88,7 +87,7 @@ export default function ProductImageViewer({ productId }) {
       <Grid xs={0} md={3}>
         {renderImageList}
       </Grid>
-      <Grid alignContent="center" xs={12} sm={9} sx={{ position: 'relative', maxWidth: 450 }}>
+      <Grid alignContent="center" xs={12} md={9} sx={{ position: 'relative', maxWidth: componentHeight }}>
         <IconButton
           aria-label="Previous image"
           onClick={handlePrevImage}
@@ -118,4 +117,6 @@ export default function ProductImageViewer({ productId }) {
 
 ProductImageViewer.propTypes = {
   productId: PropTypes.string.isRequired,
+  productImages: PropTypes.arrayOf(PropTypes.object).isRequired,
+  setProductImages: PropTypes.func.isRequired,
 };

@@ -12,13 +12,15 @@ import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 
-import { fCurrency } from 'src/utils/format-number';
+import { useCartContext } from 'src/contexts/use-cart-context';
+import PriceComponent from 'src/layouts/dashboard/common/price';
 
 import StickyComponent from 'src/components/sticky-grid';
 
 // ----------------------------------------------------------------------
 
-export default function ProductPersonalization({ productId }) {
+export default function ProductPersonalization({ productId, labelImage }) {
+  const { cartData, setCartData } = useCartContext();
   const [selectedColor, setSelectedColor] = useState('');
   const [selectedSizes, setSelectedSizes] = useState('');
   const [seizesData, setSeizesData] = useState([]);
@@ -70,6 +72,32 @@ export default function ProductPersonalization({ productId }) {
     };
     fetchDetails();
   }, [productId, productName, productPrice]);
+
+  const handleAddToCart = () => {
+    const product = {
+      id: productId,
+      name: productName,
+      color: selectedColor,
+      size: selectedSizes,
+      price: productPrice,
+      salePrice: saleProductPrice,
+      amount: 1,
+      img: labelImage,
+    };
+
+    const areProductsEqual = (item, product_) =>
+      item.id === product_.id && item.color === product_.color && item.size === product_.size;
+
+    if (cartData.some((item) => areProductsEqual(item, product))) {
+      setCartData((currData) =>
+        currData.map((item) =>
+          areProductsEqual(item, product) ? { ...item, amount: item.amount + product.amount } : item
+        )
+      );
+    } else {
+      setCartData((currData) => [...currData, product]);
+    }
+  };
 
   const handleChangeColor = (event) => {
     setSelectedColor(event.target.value);
@@ -139,23 +167,6 @@ export default function ProductPersonalization({ productId }) {
     </>
   );
 
-  const renderPrice = (
-    <Typography variant="subtitle1">
-      <Typography
-        component="span"
-        variant="body1"
-        sx={{
-          color: 'text.disabled',
-          textDecoration: 'line-through',
-        }}
-      >
-        {saleProductPrice && fCurrency(productPrice)}
-      </Typography>
-      &nbsp;
-      {fCurrency(saleProductPrice || productPrice)}
-    </Typography>
-  );
-
   return (
     <StickyComponent top={17.5} generalStyles={{ pb: 5 }} wideScreenStyles={{ pl: 10 }}>
       <Grid xs={12}>
@@ -165,13 +176,13 @@ export default function ProductPersonalization({ productId }) {
       </Grid>
       <Grid xs={12}>
         <Typography variant="h6" component="span" sx={{ mb: 3 }}>
-          {renderPrice}
+          <PriceComponent saleProductPrice={saleProductPrice} productPrice={productPrice} />
         </Typography>
       </Grid>
-      <Grid xs={12} md={12} sx={{ mb: 2.5 }} flex justifyContent="center">
+      <Grid xs={12} sx={{ mb: 2.5 }} flex justifyContent="center">
         {renderColorPicker}
       </Grid>
-      <Grid xs={12} md={12}>
+      <Grid xs={12}>
         {renderSizePicker}
       </Grid>
       <Grid xs={12}>
@@ -180,6 +191,8 @@ export default function ProductPersonalization({ productId }) {
           variant="contained"
           startIcon={<AddShoppingCartIcon />}
           sx={{ py: 1.5, width: '100%' }}
+          onClick={handleAddToCart}
+          disabled={!(selectedColor && selectedSizes)}
         >
           Add to Cart
         </Button>
@@ -190,4 +203,5 @@ export default function ProductPersonalization({ productId }) {
 
 ProductPersonalization.propTypes = {
   productId: PropTypes.string.isRequired,
+  labelImage: PropTypes.string,
 };

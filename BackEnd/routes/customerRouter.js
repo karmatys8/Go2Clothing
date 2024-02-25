@@ -3,6 +3,8 @@ const sql = require('mssql');
 const router = express.Router();
 const dbConfig = require("./db");
 const decodeTokenMiddleware = require('./verifyTokenMiddleware');
+const cors = require('cors');
+router.use(cors());
 
 router.get('/', decodeTokenMiddleware, async (req, res) => {
     const userId = req.decodedToken.userID;
@@ -48,10 +50,17 @@ router.get('/', decodeTokenMiddleware, async (req, res) => {
     }
 });
 
-router.post('/newOrder', async (req, res) => {
+router.post('/newOrder', decodeTokenMiddleware, async (req, res) => {
+
+    const userID = req.decodedToken.userID;
     try {
         const pool = await sql.connect(dbConfig);
         const { CustomerID, DeliveryDays, Freight, OrderDetails } = req.body;
+        // console.log(req.body);
+        if (userID !== CustomerID) {
+            console.log('Authentication error');
+            res.status(500).json({ success: false, error: 'Authentication error' });
+        }
 
         const result = await sql.query`
             DECLARE @NewOrderID INT;
@@ -67,9 +76,13 @@ router.post('/newOrder', async (req, res) => {
 
         const NewOrderID = result.recordset[0].NewOrderID;
 
+        console.log(NewOrderID);
+
         for (const detail of OrderDetails) {
+            const result = await sql.query`select dbo.GetProductDetailsID(${detail.ProductID},${detail.Color},${detail.Size}) AS Product_DetailsID`;
+            console.log(result);
             await sql.query`
-                EXEC InsertOrderDetails ${NewOrderID},${detail.Product_DetailsID},${detail.Quantity},${detail.Discount}
+                EXEC InsertOrderDetails ${NewOrderID},${result.recordset[0].Product_DetailsID},${detail.Quantity}
             `;
         }
         await sql.close();

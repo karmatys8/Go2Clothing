@@ -3,23 +3,20 @@ import Grid from '@mui/material/Unstable_Grid2/Grid2';
 
 import CartSummary from '../cart-summary';
 import CartItemsList from '../cart-items-list';
-import { CartContextProvider } from '../use-cart-context';
 
 // ----------------------------------------------------------------------
 
 export default function CartView() {
   return (
-    <CartContextProvider>
-      <Container sx={{ mb: 5 }}>
-        <Grid container>
-          <Grid item xs={12} md={8}>
-            <CartItemsList />
-          </Grid>
-          <Grid xs={12} md={4} item>
-            <CartSummary />
-          </Grid>
+    <Container sx={{ mb: 5 }}>
+      <Grid container>
+        <Grid xs={12} md={8}>
+          <CartItemsList />
         </Grid>
-      </Container>
-    </CartContextProvider>
+        <Grid xs={12} md={4}>
+          <CartSummary />
+        </Grid>
+      </Grid>
+    </Container>
   );
 }
