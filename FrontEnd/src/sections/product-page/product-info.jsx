@@ -80,5 +80,5 @@ export default function ProductInfo({ productId }) {
 }
 
 ProductInfo.propTypes = {
-  productId: PropTypes.number.isRequired,
+  productId: PropTypes.string.isRequired,
 };

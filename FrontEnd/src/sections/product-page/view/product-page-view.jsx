@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import Container from '@mui/material/Container';
@@ -10,17 +11,22 @@ import ProductRecommendations from '../product-recommendations';
 
 export default function SingleProductView() {
   const { productId } = useParams();
+  const [productImages, setProductImages] = useState([]);
 
   return (
     <Container>
       <Grid container sx={{ mb: 15 }}>
-        <Grid item xs={12} md={8}>
-          <ProductImageViewer productId={productId} />
+        <Grid xs={12} md={8}>
+          <ProductImageViewer
+            productId={productId}
+            productImages={productImages}
+            setProductImages={setProductImages}
+          />
         </Grid>
-        <Grid item xs={12} md={4}>
-          <ProductPersonalization productId={productId} />
+        <Grid xs={12} md={4}>
+          <ProductPersonalization productId={productId} labelImage={productImages[0]?.img} />
         </Grid>
-        <Grid item xs={12} md={8}>
+        <Grid xs={12} md={8}>
           <ProductInfo productId={productId} />
         </Grid>
       </Grid>

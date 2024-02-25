@@ -16,7 +16,7 @@ const navConfig = [
   {
     title: 'cart',
     path: '/cart',
-    role: ['customer'],
+    role: 'all',
   },
   {
     title: 'products-stats',

@@ -59,7 +59,7 @@ export default function LanguagePopover() {
         onClose={handleClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        PaperProps={{
+        SlotComponentProps={{
           sx: {
             p: 0,
             mt: 1,

@@ -27,10 +27,9 @@ const pickedImageStyles = {
   zIndex: 20,
 };
 
-export default function ProductImageViewer({ productId }) {
+export default function ProductImageViewer({ productId, productImages, setProductImages }) {
   const [imageIndex, setImageIndex] = useState(0);
   const [isVisible, setIsVisible, fadeProps] = useFade();
-  const [productImages, setProductImages] = useState([]);
 
   useEffect(() => {
     const fetchProductImages = async () => {
@@ -47,7 +46,7 @@ export default function ProductImageViewer({ productId }) {
     };
 
     fetchProductImages();
-  }, [productId]);
+  }, [productId, setProductImages]);
   const handleClickImage = (id) => {
     setIsVisible(false);
     setImageIndex(id);
@@ -78,10 +77,10 @@ export default function ProductImageViewer({ productId }) {
 
   return (
     <Grid container sx={{ mb: 5 }}>
-      <Grid item xs={0} sm={2}>
+      <Grid xs={0} sm={2}>
         {renderImageList}
       </Grid>
-      <Grid item container alignContent="center" xs={12} sm={10} sx={{ position: 'relative' }}>
+      <Grid alignContent="center" xs={12} sm={10} sx={{ position: 'relative' }}>
         <IconButton
           aria-label="Previous image"
           onClick={() =>
@@ -107,5 +106,7 @@ export default function ProductImageViewer({ productId }) {
 }
 
 ProductImageViewer.propTypes = {
-  productId: PropTypes.number.isRequired,
+  productId: PropTypes.string.isRequired,
+  productImages: PropTypes.arrayOf(PropTypes.object).isRequired,
+  setProductImages: PropTypes.func.isRequired,
 };

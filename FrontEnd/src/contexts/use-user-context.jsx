@@ -43,5 +43,7 @@ UserContextProvider.propTypes = {
     email: PropTypes.string.isRequired,
     firstName: PropTypes.string.isRequired,
     lastName: PropTypes.string.isRequired,
+    userId: PropTypes.number.isRequired,
+    token: PropTypes.string,
   }),
 };
