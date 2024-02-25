@@ -8,19 +8,21 @@ import ProductImageViewer from '../product-image-viewer';
 import ProductPersonalization from '../product-personalization';
 import ProductRecommendations from '../product-recommendations';
 
+// ----------------------------------------------------------------------
+
 export default function SingleProductView() {
   const { productId } = useParams();
 
   return (
     <Container>
       <Grid container sx={{ mb: 15 }}>
-        <Grid item xs={12} md={8}>
+        <Grid xs={12} sm={8}>
           <ProductImageViewer productId={productId} />
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid xs={12} sm={4}>
           <ProductPersonalization productId={productId} />
         </Grid>
-        <Grid item xs={12} md={8}>
+        <Grid xs={12} sm={8}>
           <ProductInfo productId={productId} />
         </Grid>
       </Grid>

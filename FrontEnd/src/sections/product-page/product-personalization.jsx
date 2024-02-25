@@ -158,23 +158,23 @@ export default function ProductPersonalization({ productId }) {
 
   return (
     <StickyComponent top={17.5} generalStyles={{ pb: 5 }} wideScreenStyles={{ pl: 10 }}>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <Typography variant="h4" component="h2" sx={{ mb: 0.5 }}>
           {productName}
         </Typography>
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <Typography variant="h6" component="span" sx={{ mb: 3 }}>
           {renderPrice}
         </Typography>
       </Grid>
-      <Grid item xs={6} md={12} sx={{ mb: 2.5 }} flex justifyContent="center">
+      <Grid xs={12} md={12} sx={{ mb: 2.5 }} flex justifyContent="center">
         {renderColorPicker}
       </Grid>
-      <Grid item xs={6} md={12}>
+      <Grid xs={12} md={12}>
         {renderSizePicker}
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <Button
           component="label"
           variant="contained"
@@ -189,5 +189,5 @@ export default function ProductPersonalization({ productId }) {
 }
 
 ProductPersonalization.propTypes = {
-  productId: PropTypes.number.isRequired,
+  productId: PropTypes.string.isRequired,
 };

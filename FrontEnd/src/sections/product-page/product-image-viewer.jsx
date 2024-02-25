@@ -8,7 +8,7 @@ import ImageListItem from '@mui/material/ImageListItem';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 
-import useFade from 'src/hooks/use-fade';
+import { useResponsive } from 'src/hooks/use-responsive';
 
 // ----------------------------------------------------------------------
 
@@ -29,8 +29,15 @@ const pickedImageStyles = {
 
 export default function ProductImageViewer({ productId }) {
   const [imageIndex, setImageIndex] = useState(0);
-  const [isVisible, setIsVisible, fadeProps] = useFade();
   const [productImages, setProductImages] = useState([]);
+
+  const isSm = useResponsive('up', 'sm');
+  const isMd = useResponsive('up', 'md');
+  const [componentHeight, setComponentHeight] = useState(500);
+
+  useEffect(() => {
+    setComponentHeight(500 + (isSm + isMd) * 100); // different seizes on mobile, tablet and desktop
+  }, [isSm, isMd]);
 
   useEffect(() => {
     const fetchProductImages = async () => {
@@ -48,26 +55,26 @@ export default function ProductImageViewer({ productId }) {
 
     fetchProductImages();
   }, [productId]);
-  const handleClickImage = (id) => {
-    setIsVisible(false);
-    setImageIndex(id);
+
+  const handlePrevImage = () => {
+    setImageIndex((imageIndex - 1 + productImages.length) % productImages.length);
   };
 
-  useEffect(() => {
-    setIsVisible(true);
-  }, [imageIndex, setIsVisible]);
+  const handleNextImage = () => {
+    setImageIndex((imageIndex + 1) % productImages.length);
+  };
 
   const renderImageList = (
-    <ImageList sx={{ height: 450, m: 0 }} cols={1} gap={10} m={0}>
+    <ImageList sx={{ height: componentHeight, m: 0, mr: 2 }} cols={1} gap={10}>
       {productImages.map((product) => (
         <ImageListItem
-          onClick={() => handleClickImage(product.id)}
+          onClick={() => setImageIndex(product.id)}
           key={product.id}
           sx={{ '&::before': product.id === imageIndex ? pickedImageStyles : {} }}
         >
           <img
-            srcSet={`${product.img}?w=80&h=100&fit=crop&auto=format&dpr=2 2x`}
-            src={`${product.img}?w=80&h=100&fit=crop&auto=format`}
+            srcSet={`${product.src}?w=80&h=100&fit=crop&auto=format&dpr=2 2x`}
+            src={`${product.src}?w=80&h=100&fit=crop&auto=format`}
             alt={product.title}
             loading="lazy"
           />
@@ -77,26 +84,29 @@ export default function ProductImageViewer({ productId }) {
   );
 
   return (
-    <Grid container sx={{ mb: 5 }}>
-      <Grid item xs={0} sm={2}>
+    <Grid container sx={{ mb: 5, justifyContent: 'center' }}>
+      <Grid xs={0} md={3}>
         {renderImageList}
       </Grid>
-      <Grid item container alignContent="center" xs={12} sm={10} sx={{ position: 'relative' }}>
+      <Grid alignContent="center" xs={12} sm={9} sx={{ position: 'relative', maxWidth: 450 }}>
         <IconButton
           aria-label="Previous image"
-          onClick={() =>
-            handleClickImage((imageIndex - 1 + productImages.length) % productImages.length)
-          }
+          onClick={handlePrevImage}
           sx={{ ...iconButtonStyles, left: 10 }}
         >
           <NavigateBeforeIcon sx={{ color: 'white' }} />
         </IconButton>
-        {isVisible && (
-          <img src={productImages[imageIndex]?.img} alt="Product" height={450} {...fadeProps} />
-        )}
+
+        <img
+          src={productImages.find((img) => img.id === imageIndex)?.src}
+          alt="Product"
+          height={componentHeight}
+          style={{ objectFit: 'cover' }}
+        />
+
         <IconButton
           aria-label="Next image"
-          onClick={() => handleClickImage((imageIndex + 1) % productImages.length)}
+          onClick={handleNextImage}
           sx={{ ...iconButtonStyles, right: 10 }}
         >
           <NavigateNextIcon sx={{ color: 'white' }} />
@@ -107,5 +117,5 @@ export default function ProductImageViewer({ productId }) {
 }
 
 ProductImageViewer.propTypes = {
-  productId: PropTypes.number.isRequired,
+  productId: PropTypes.string.isRequired,
 };
