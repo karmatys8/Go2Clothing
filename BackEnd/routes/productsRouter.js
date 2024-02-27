@@ -124,7 +124,7 @@ router.get('/size/:id',async (req, res) => {
         if (result.recordset.length === 0) {
             return res.status(404).json({ error: 'Product not found.' });
         }
-        const sizes = result.recordset.map(record => record.Size.trim()); // Usuwa białe znaki ze wszystkich rozmiarów
+        const sizes = result.recordset.map(record => record.Size.trim());
 
         res.status(200).json(sizes);
     } catch (err) {
@@ -142,9 +142,10 @@ router.get('/images/:id',async (req, res) => {
         if (result.recordset.length === 0) {
             return res.status(404).json({ error: 'Product not found.' });
         }
+        let imageId = 0;
         const images = result.recordset.map((record) => ({
-            id: record.id,
-            img: record.img,
+            id: imageId++,
+            src: record.img,
             title: record.title.trim(),
         }));
         res.status(200).json(images);

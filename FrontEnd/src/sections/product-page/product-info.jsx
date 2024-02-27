@@ -39,7 +39,7 @@ export default function ProductInfo({ productId }) {
           aria-controls="panel1bh-content"
           id="panel1bh-header"
         >
-          <Typography sx={{ width: '33%', flexShrink: 0 }}>Description</Typography>
+          <Typography>Description</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Typography>{productDescription}</Typography>
@@ -51,7 +51,7 @@ export default function ProductInfo({ productId }) {
           aria-controls="panel2bh-content"
           id="panel2bh-header"
         >
-          <Typography sx={{ width: '33%', flexShrink: 0 }}>Shipping and payment</Typography>
+          <Typography>Shipping and payment</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Typography>
@@ -66,7 +66,7 @@ export default function ProductInfo({ productId }) {
           aria-controls="panel3bh-content"
           id="panel3bh-header"
         >
-          <Typography sx={{ width: '33%', flexShrink: 0 }}>Product return</Typography>
+          <Typography>Product return</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Typography>

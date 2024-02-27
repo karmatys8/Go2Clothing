@@ -6,7 +6,9 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Button, useTheme, TextField, FormControl, useMediaQuery } from '@mui/material';
+import { Button, TextField, FormControl } from '@mui/material';
+
+import { useResponsive } from 'src/hooks/use-responsive';
 
 import { useCartContext } from 'src/contexts/use-cart-context';
 import PriceComponent from 'src/layouts/dashboard/common/price';
@@ -14,8 +16,7 @@ import PriceComponent from 'src/layouts/dashboard/common/price';
 // ----------------------------------------------------------------------
 
 export default function CartItem({ product }) {
-  const theme = useTheme();
-  const isTablet = useMediaQuery(theme.breakpoints.up('sm'));
+  const isSm = useResponsive('up', 'sm');
 
   const { setCartData } = useCartContext();
 
@@ -70,7 +71,7 @@ export default function CartItem({ product }) {
 
   return (
     <Card>
-      <Stack direction={isTablet ? 'row' : 'column'} position="relative">
+      <Stack direction={isSm ? 'row' : 'column'} position="relative">
         <Stack direction="row" flexGrow={1}>
           <Box sx={{ pt: 20, position: 'relative', height: 1, aspectRatio: '1/1' }}>
             {renderImg}
@@ -94,7 +95,7 @@ export default function CartItem({ product }) {
         </Stack>
 
         <Stack
-          direction={isTablet ? 'column' : 'row'}
+          direction={isSm ? 'column' : 'row'}
           justifyContent="space-between"
           textAlign="right"
           sx={{ p: 2 }}

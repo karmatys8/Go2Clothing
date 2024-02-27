@@ -21,32 +21,6 @@ import StickyComponent from 'src/components/sticky-grid';
 
 export default function ProductPersonalization({ productId, labelImage }) {
   const { cartData, setCartData } = useCartContext();
-
-  const handleAddToCart = () => {
-    const product = {
-      id: productId,
-      name: productName,
-      color: selectedColor,
-      size: selectedSizes,
-      price: productPrice,
-      salePrice: saleProductPrice,
-      amount: 1,
-      img: labelImage,
-    };
-
-    const areProductsEqual = (item, product_) =>
-      item.id === product_.id && item.color === product_.color && item.size === product_.size;
-
-    if (cartData.some((item) => areProductsEqual(item, product))) {
-      setCartData((currData) =>
-        currData.map((item) =>
-          areProductsEqual(item, product) ? { ...item, amount: item.amount + product.amount } : item
-        )
-      );
-    } else {
-      setCartData((currData) => [...currData, product]);
-    }
-  };
   const [selectedColor, setSelectedColor] = useState('');
   const [selectedSizes, setSelectedSizes] = useState('');
   const [seizesData, setSeizesData] = useState([]);
@@ -98,6 +72,32 @@ export default function ProductPersonalization({ productId, labelImage }) {
     };
     fetchDetails();
   }, [productId, productName, productPrice]);
+
+  const handleAddToCart = () => {
+    const product = {
+      id: productId,
+      name: productName,
+      color: selectedColor,
+      size: selectedSizes,
+      price: productPrice,
+      salePrice: saleProductPrice,
+      amount: 1,
+      img: labelImage,
+    };
+
+    const areProductsEqual = (item, product_) =>
+      item.id === product_.id && item.color === product_.color && item.size === product_.size;
+
+    if (cartData.some((item) => areProductsEqual(item, product))) {
+      setCartData((currData) =>
+        currData.map((item) =>
+          areProductsEqual(item, product) ? { ...item, amount: item.amount + product.amount } : item
+        )
+      );
+    } else {
+      setCartData((currData) => [...currData, product]);
+    }
+  };
 
   const handleChangeColor = (event) => {
     setSelectedColor(event.target.value);
@@ -179,10 +179,10 @@ export default function ProductPersonalization({ productId, labelImage }) {
           <PriceComponent saleProductPrice={saleProductPrice} productPrice={productPrice} />
         </Typography>
       </Grid>
-      <Grid xs={6} md={12} sx={{ mb: 2.5 }} flex justifyContent="center">
+      <Grid xs={12} sx={{ mb: 2.5 }} flex justifyContent="center">
         {renderColorPicker}
       </Grid>
-      <Grid xs={6} md={12}>
+      <Grid xs={12}>
         {renderSizePicker}
       </Grid>
       <Grid xs={12}>

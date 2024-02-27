@@ -1,28 +1,37 @@
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import Carousel from 'react-material-ui-carousel';
+import Carousel from 'react-multi-carousel';
+import 'react-multi-carousel/lib/styles.css';
 
 import Box from '@mui/material/Box';
-import { Typography } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme, Typography } from '@mui/material';
 
 import ProductCard from 'src/components/product-card';
 
 // ----------------------------------------------------------------------
 
-function chunkArray(array, size) {
-  const result = [];
-  for (let i = 0; i < array.length; i += size) {
-    result.push(array.slice(i, i + size));
-  }
-  return result;
-}
+const getResponsiveObject = (theme) => ({
+    desktop: {
+      breakpoint: { max: Infinity, min: theme.breakpoints.values.md },
+      items: 4,
+      slidesToSlide: 4,
+    },
+    tablet: {
+      breakpoint: { max: theme.breakpoints.values.md, min: theme.breakpoints.values.sm },
+      items: 2,
+      slidesToSlide: 2,
+    },
+    mobile: {
+      breakpoint: { max: theme.breakpoints.values.sm, min: 0 },
+      items: 1,
+    },
+  });
+
 
 export default function ProductRecommendations({ productId }) {
-  const isDesktop = useMediaQuery((theme) => theme.breakpoints.up('md'));
-  const [groupedProducts, setGroupedProducts] = useState([]);
+  const theme = useTheme();
+  const responsive = getResponsiveObject(theme);
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -43,26 +52,18 @@ export default function ProductRecommendations({ productId }) {
     fetchProducts();
   }, [productId]);
 
-  useEffect(() => {
-    setGroupedProducts(chunkArray(products, isDesktop ? 4 : 2));
-  }, [isDesktop, products]);
-
   return (
     <Box>
       <Typography variant="h4" sx={{ pb: 2 }}>
         More from this category:
       </Typography>
-      <Carousel autoPlay={false} indicators={false} navButtonsAlwaysVisible cycleNavigation={false}>
-        {groupedProducts.map((productList, i) => (
-          <Grid container spacing={2} key={i}>
-            {productList.map((product) => (
-              <Grid xs={6} md={3} key={product.id}>
-                <Link to={`/product-page/${product.id}`} style={{ textDecoration: 'none' }}>
-                  <ProductCard product={product} key={product.id} />
-                </Link>
-              </Grid>
-            ))}
-          </Grid>
+      <Carousel responsive={responsive}>
+        {products.map((product) => (
+          <div style={{ marginInline: 12 }} key={product.id}>
+            <Link to={`/product-page/${product.id}`} style={{ textDecoration: 'none' }}>
+              <ProductCard product={product} />
+            </Link>
+          </div>
         ))}
       </Carousel>
     </Box>
