@@ -1,10 +1,13 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { enqueueSnackbar } from 'notistack';
 
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
+
+import handleNetworkError from 'src/utils/handle-network-error';
 
 import ProductCard from 'src/components/product-card';
 
@@ -25,12 +28,16 @@ export default function ProductsView() {
       try {
         const response = await fetch(`http://localhost:3000/products/${from}/${offset}`);
 
+        const data = await response.json();
         if (response.ok) {
-          const data = await response.json();
           setProducts(data.recordset);
-        } else throw new Error('Network response was not ok');
+        } else if (response.status === 500) {
+          enqueueSnackbar(`Failed to fetch products due to a server error`, { variant: 'error' });
+        } else {
+          enqueueSnackbar(`Unknown error: ${data.error}`, { variant: 'error' });
+        }
       } catch (error) {
-        console.error('Error fetching products:', error);
+        handleNetworkError(error);
       }
     };
 

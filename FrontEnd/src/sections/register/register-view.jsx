@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { enqueueSnackbar } from 'notistack';
 import { useDebouncedCallback } from 'use-debounce';
 
 import Box from '@mui/material/Box';
@@ -11,6 +12,8 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import { useRouter } from 'src/routes/hooks';
+
+import handleNetworkError from 'src/utils/handle-network-error';
 
 import { bgGradient } from 'src/theme/css';
 
@@ -43,7 +46,9 @@ export default function RegisterView() {
     }));
   };
 
-  const register = async () => {
+  const register = async (event) => {
+    event.preventDefault();
+
     try {
       const response = await fetch('http://localhost:3000/users/register', {
         method: 'POST',
@@ -52,11 +57,27 @@ export default function RegisterView() {
         },
         body: JSON.stringify({ ...nameData, email, password, confirmPassword }),
       });
+
       if (response.ok) {
         router.push('/login');
-      }
+        enqueueSnackbar('Register successful', { variant: 'success' });
+      } else handleError(response);
     } catch (error) {
-      console.error('Network error:', error.message);
+      handleNetworkError();
+    }
+  };
+
+  const handleError = async (response) => {
+    const data = await response.json();
+
+    if (response.status === 409) {
+      enqueueSnackbar('Email already in use', { variant: 'error' });
+    } else if (response.status === 422) {
+      enqueueSnackbar(`Invalid data: ${data.error}`, { variant: 'error' });
+    } else if (response.status === 500) {
+      enqueueSnackbar(`Failed to register due to a server error`, { variant: 'error' });
+    } else {
+      enqueueSnackbar(`Unknown error: ${data.error}`, { variant: 'error' });
     }
   };
 
