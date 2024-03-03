@@ -7,7 +7,7 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 
-import handleNetworkError from 'src/utils/handle-network-error';
+import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-error';
 
 import ProductCard from 'src/components/product-card';
 
@@ -33,9 +33,7 @@ export default function ProductsView() {
           setProducts(data.recordset);
         } else if (response.status === 500) {
           enqueueSnackbar(`Failed to fetch products due to a server error`, { variant: 'error' });
-        } else {
-          enqueueSnackbar(`Unknown error: ${data.error}`, { variant: 'error' });
-        }
+        } else handleUnexpectedError(data.error, 'while fetching products');
       } catch (error) {
         handleNetworkError(error);
       }

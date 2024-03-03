@@ -2,32 +2,34 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Carousel from 'react-multi-carousel';
+import { enqueueSnackbar } from 'notistack';
 import 'react-multi-carousel/lib/styles.css';
 
 import Box from '@mui/material/Box';
 import { useTheme, Typography } from '@mui/material';
+
+import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-error';
 
 import ProductCard from 'src/components/product-card';
 
 // ----------------------------------------------------------------------
 
 const getResponsiveObject = (theme) => ({
-    desktop: {
-      breakpoint: { max: Infinity, min: theme.breakpoints.values.md },
-      items: 4,
-      slidesToSlide: 4,
-    },
-    tablet: {
-      breakpoint: { max: theme.breakpoints.values.md, min: theme.breakpoints.values.sm },
-      items: 2,
-      slidesToSlide: 2,
-    },
-    mobile: {
-      breakpoint: { max: theme.breakpoints.values.sm, min: 0 },
-      items: 1,
-    },
-  });
-
+  desktop: {
+    breakpoint: { max: Infinity, min: theme.breakpoints.values.md },
+    items: 4,
+    slidesToSlide: 4,
+  },
+  tablet: {
+    breakpoint: { max: theme.breakpoints.values.md, min: theme.breakpoints.values.sm },
+    items: 2,
+    slidesToSlide: 2,
+  },
+  mobile: {
+    breakpoint: { max: theme.breakpoints.values.sm, min: 0 },
+    items: 1,
+  },
+});
 
 export default function ProductRecommendations({ productId }) {
   const theme = useTheme();
@@ -38,14 +40,17 @@ export default function ProductRecommendations({ productId }) {
     const fetchProducts = async () => {
       try {
         const response = await fetch(`http://localhost:3000/products/recommendations/${productId}`);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
         const data = await response.json();
 
-        setProducts(data.recordset);
+        if (response.ok) {
+          setProducts(data.recordset);
+        } else if (response.status === 500) {
+          enqueueSnackbar(`Failed to fetch product recommendations due to a server error`, {
+            variant: 'error',
+          });
+        } else handleUnexpectedError(data.error, 'while fetching product recommendations');
       } catch (error) {
-        console.error('Error fetching products:', error);
+        handleNetworkError(error);
       }
     };
 

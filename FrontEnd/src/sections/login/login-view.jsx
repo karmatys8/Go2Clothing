@@ -14,7 +14,7 @@ import { alpha, useTheme } from '@mui/material/styles';
 
 import { useRouter } from 'src/routes/hooks';
 
-import handleNetworkError from 'src/utils/handle-network-error';
+import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-error';
 
 import { bgGradient } from 'src/theme/css';
 import { useUserContext } from 'src/contexts/use-user-context';
@@ -72,9 +72,7 @@ export default function LoginView() {
       enqueueSnackbar(`Invalid data: ${data.error}`, { variant: 'error' });
     } else if (response.status === 500) {
       enqueueSnackbar(`Failed to login due to a server error`, { variant: 'error' });
-    } else {
-      enqueueSnackbar(`Unknown error: ${data.error}`, { variant: 'error' });
-    }
+    } else handleUnexpectedError(data.error, 'while logging in');
   };
 
   const renderForm = (

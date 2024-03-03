@@ -5,7 +5,7 @@ import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import { Alert, Button, Typography } from '@mui/material';
 import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
 
-import handleNetworkError from 'src/utils/handle-network-error';
+import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-error';
 
 import { useCartContext } from 'src/contexts/use-cart-context';
 import { useUserContext } from 'src/contexts/use-user-context';
@@ -59,7 +59,7 @@ export default function CartSummary() {
         enqueueSnackbar(`Failed to place the order due to a server error`, { variant: 'error' });
       } else {
         const data = await response.json();
-        enqueueSnackbar(`Unknown error: ${data.error}`, { variant: 'error' });
+        handleUnexpectedError(data.error, 'while placing order');
       }
     } catch (error) {
       handleNetworkError(error);

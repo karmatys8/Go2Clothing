@@ -1,11 +1,10 @@
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
-import { enqueueSnackbar } from 'notistack';
 
 import { Button } from '@mui/material';
 import { GridAddIcon, GridRowModes, GridToolbarContainer } from '@mui/x-data-grid';
 
-import handleNetworkError from 'src/utils/handle-network-error';
+import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-error';
 
 // ----------------------------------------------------------------------
 
@@ -21,9 +20,7 @@ export default function EditToolbar(props) {
 
         if (response.ok) {
           setNextIndex(data.nextId);
-        } else {
-          enqueueSnackbar(`Unknown error: ${data.error}`, { variant: 'error' });
-        }
+        } else handleUnexpectedError(data.error, 'while fetching next product id');
       } catch (error) {
         handleNetworkError(error);
       }

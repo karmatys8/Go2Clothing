@@ -11,7 +11,7 @@ import {
   GridRowEditStopReasons,
 } from '@mui/x-data-grid';
 
-import handleNetworkError from 'src/utils/handle-network-error';
+import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-error';
 
 import EditToolbar from '../edit-toolbar';
 
@@ -60,7 +60,7 @@ export default function ProductsStatsPage() {
         });
       } else {
         const data = await response.json();
-        enqueueSnackbar(`Unknown error: ${data.error}`, { variant: 'error' });
+        handleUnexpectedError(data.error, 'while adding product');
       }
     } catch (error) {
       handleNetworkError(error);
@@ -86,7 +86,7 @@ export default function ProductsStatsPage() {
         });
       } else {
         const data = await response.json();
-        enqueueSnackbar(`Unknown error: ${data.error}`, { variant: 'error' });
+        handleUnexpectedError(data.error, 'while deleting product');
       }
     } catch (error) {
       handleNetworkError(error);
@@ -124,7 +124,7 @@ export default function ProductsStatsPage() {
         enqueueSnackbar(`Failed to update product due to a server error`, { variant: 'error' });
       } else {
         const data = await response.json();
-        enqueueSnackbar(`Unknown error: ${data.error}`, { variant: 'error' });
+        handleUnexpectedError(data.error, 'while updating product');
       }
     } catch (error) {
       handleNetworkError(error);
@@ -252,9 +252,7 @@ export default function ProductsStatsPage() {
           setRows(data);
         } else if (response.status === 500) {
           enqueueSnackbar(`Failed to fetch data`, { variant: 'error' });
-        } else {
-          enqueueSnackbar(`Unknown error: ${data.error}`, { variant: 'error' });
-        }
+        } else handleUnexpectedError(data.error, 'while fetching products');
       } catch (error) {
         handleNetworkError(error);
       }

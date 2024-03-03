@@ -13,6 +13,8 @@ import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 
+import { handleUnexpectedError } from 'src/utils/handle-common-error';
+
 import { useCartContext } from 'src/contexts/use-cart-context';
 import PriceComponent from 'src/layouts/dashboard/common/price';
 
@@ -96,9 +98,7 @@ export default function ProductPersonalization({ productId, labelImage }) {
       enqueueSnackbar(`Failed to fetch ${category} data due to a server error`, {
         variant: 'error',
       });
-    } else {
-      enqueueSnackbar(`Unknown error: ${data.error}`, { variant: 'error' });
-    }
+    } else handleUnexpectedError(data.error, `while fetching ${category}`)
   };
 
   function handleFetchNetworkError(error, category) {

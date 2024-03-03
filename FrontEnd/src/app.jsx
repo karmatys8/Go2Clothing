@@ -3,12 +3,13 @@ import 'src/global.css';
 
 import { useScrollToTop } from 'src/hooks/use-scroll-to-top';
 
+import ThemeProvider from 'src/theme';
 import { SnackbarProvider } from 'notistack';
 
-import ThemeProvider from 'src/theme';
 import Router from 'src/routes/sections';
 import { UserContextProvider } from './contexts/use-user-context';
 import { CartContextProvider } from './contexts/use-cart-context';
+
 // ----------------------------------------------------------------------
 
 export default function App() {
@@ -16,7 +17,7 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <SnackbarProvider>
+      <SnackbarProvider maxSnack={5} preventDuplicate>
         <UserContextProvider>
           <CartContextProvider>
             <Router />
