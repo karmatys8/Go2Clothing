@@ -56,7 +56,7 @@ router.post('/newOrder', decodeTokenMiddleware, async (req, res) => {
     try {
         const pool = await sql.connect(dbConfig);
         const { CustomerID, DeliveryDays, Freight, OrderDetails } = req.body;
-        // console.log(req.body);
+        
         if (userID !== CustomerID) {
             console.log('Authentication error');
             res.status(500).json({ success: false, error: 'Authentication error' });

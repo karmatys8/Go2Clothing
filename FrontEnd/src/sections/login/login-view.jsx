@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { enqueueSnackbar } from 'notistack';
 import { Link as RouterLink } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
@@ -12,6 +13,8 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import { useRouter } from 'src/routes/hooks';
+
+import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-error';
 
 import { bgGradient } from 'src/theme/css';
 import { useUserContext } from 'src/contexts/use-user-context';
@@ -43,17 +46,33 @@ export default function LoginView() {
         },
         body: JSON.stringify({ email, password }),
       });
+      const data = await response.json();
       if (response.ok) {
-        const data = await response.json();
-
-        localStorage.setItem('WDAI_Project_token', data.token);
-        setUserData({...data.user, token: data.token});
-
-        router.back();
-      }
+        handleSuccess(data);
+      } else handleError(response, data);
     } catch (error) {
-      console.error('Network error:', error.message);
+      handleNetworkError(error);
     }
+  };
+
+  const handleSuccess = (data) => {
+    localStorage.setItem('WDAI_Project_token', data.token);
+    setUserData({ ...data.user, token: data.token });
+
+    router.back();
+    enqueueSnackbar('Login successful', { variant: 'success' });
+  };
+
+  const handleError = (response, data) => {
+    if (response.status === 401) {
+      enqueueSnackbar('Invalid password', { variant: 'error' });
+    } else if (response.status === 404) {
+      enqueueSnackbar('User with given email does not exist', { variant: 'error' });
+    } else if (response.status === 422) {
+      enqueueSnackbar(`Invalid data: ${data.error}`, { variant: 'error' });
+    } else if (response.status === 500) {
+      enqueueSnackbar(`Failed to login due to a server error`, { variant: 'error' });
+    } else handleUnexpectedError(data.error, 'while logging in');
   };
 
   const renderForm = (

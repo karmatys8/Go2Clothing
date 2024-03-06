@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
+import { enqueueSnackbar } from 'notistack';
 
 import Box from '@mui/material/Box';
 import Radio from '@mui/material/Radio';
@@ -11,6 +12,8 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+
+import { handleUnexpectedError } from 'src/utils/handle-common-error';
 
 import { useCartContext } from 'src/contexts/use-cart-context';
 import PriceComponent from 'src/layouts/dashboard/common/price';
@@ -31,12 +34,17 @@ export default function ProductPersonalization({ productId, labelImage }) {
 
   useEffect(() => {
     const fetchSizesData = async () => {
+      const category = 'Size';
+
       try {
         const response = await fetch(`http://localhost:3000/products/size/${productId}`);
+
         const data = await response.json();
-        setSeizesData(data);
+        if (response.ok) {
+          setSeizesData(data);
+        } else handleFetchError(response, data, category);
       } catch (error) {
-        console.error('Error while fetching sizes:', error);
+        handleFetchNetworkError(error, category);
       }
     };
 
@@ -45,12 +53,17 @@ export default function ProductPersonalization({ productId, labelImage }) {
 
   useEffect(() => {
     const fetchColorData = async () => {
+      const category = 'Color';
+
       try {
         const response = await fetch(`http://localhost:3000/products/colors/${productId}`);
+
         const data = await response.json();
-        setColorData(data);
+        if (response.ok) {
+          setColorData(data);
+        } else handleFetchError(response, data, category);
       } catch (error) {
-        console.error('Error while fetching colors:', error);
+        handleFetchNetworkError(error, category);
       }
     };
 
@@ -59,19 +72,39 @@ export default function ProductPersonalization({ productId, labelImage }) {
 
   useEffect(() => {
     const fetchDetails = async () => {
+      const category = 'Details';
+
       try {
         const response = await fetch(`http://localhost:3000/products/details/${productId}`);
-        const data = await response.json();
 
-        setProductName(data.ProductName);
-        setProductPrice(data.ProductPrice);
-        setSaleProductPrice(data.SalePrice);
+        const data = await response.json();
+        if (response.ok) {
+          setProductName(data.ProductName);
+          setProductPrice(data.ProductPrice);
+          setSaleProductPrice(data.SalePrice);
+        } else handleFetchError(response, data, category);
       } catch (error) {
-        console.error('Error while fetching details:', error);
+        handleFetchNetworkError(error, category);
       }
     };
+
     fetchDetails();
   }, [productId, productName, productPrice]);
+
+  const handleFetchError = (response, data, category) => {
+    if (response.status === 404) {
+      enqueueSnackbar(`${category} data does not exist for this product`, { variant: 'error' });
+    } else if (response.status === 500) {
+      enqueueSnackbar(`Failed to fetch ${category} data due to a server error`, {
+        variant: 'error',
+      });
+    } else handleUnexpectedError(data.error, `while fetching ${category}`)
+  };
+
+  function handleFetchNetworkError(error, category) {
+    console.error(`Network error: ${error.message}`);
+    enqueueSnackbar(`Failed to load resources for ${category}`, { variant: 'error' });
+  }
 
   const handleAddToCart = () => {
     const product = {
@@ -88,14 +121,23 @@ export default function ProductPersonalization({ productId, labelImage }) {
     const areProductsEqual = (item, product_) =>
       item.id === product_.id && item.color === product_.color && item.size === product_.size;
 
-    if (cartData.some((item) => areProductsEqual(item, product))) {
-      setCartData((currData) =>
-        currData.map((item) =>
-          areProductsEqual(item, product) ? { ...item, amount: item.amount + product.amount } : item
-        )
-      );
-    } else {
-      setCartData((currData) => [...currData, product]);
+    try {
+      if (cartData.some((item) => areProductsEqual(item, product))) {
+        setCartData((prev) =>
+          prev.map((item) =>
+            areProductsEqual(item, product)
+              ? { ...item, amount: item.amount + product.amount }
+              : item
+          )
+        );
+      } else {
+        setCartData((prev) => [...prev, product]);
+      }
+
+      enqueueSnackbar('Added to cart', { variant: 'success' });
+    } catch (error) {
+      console.error(`Network error: ${error.message}`);
+      enqueueSnackbar(`Network error: ${error.message}`, { variant: 'error' });
     }
   };
 
@@ -182,9 +224,7 @@ export default function ProductPersonalization({ productId, labelImage }) {
       <Grid xs={12} sx={{ mb: 2.5 }} flex justifyContent="center">
         {renderColorPicker}
       </Grid>
-      <Grid xs={12}>
-        {renderSizePicker}
-      </Grid>
+      <Grid xs={12}>{renderSizePicker}</Grid>
       <Grid xs={12}>
         <Button
           component="label"

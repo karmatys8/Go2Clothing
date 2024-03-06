@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
+import { enqueueSnackbar } from 'notistack';
 
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import { Alert, Button, Typography } from '@mui/material';
 import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
+
+import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-error';
 
 import { useCartContext } from 'src/contexts/use-cart-context';
 import { useUserContext } from 'src/contexts/use-user-context';
@@ -51,10 +54,15 @@ export default function CartSummary() {
       });
 
       if (response.ok) {
-        console.info('Checkout successful'); // can be changed
+        enqueueSnackbar('Order placed successfully', { variant: 'success' });
+      } else if (response.status === 500) {
+        enqueueSnackbar(`Failed to place the order due to a server error`, { variant: 'error' });
+      } else {
+        const data = await response.json();
+        handleUnexpectedError(data.error, 'while placing order');
       }
     } catch (error) {
-      console.error('Checkout error:', error);
+      handleNetworkError(error);
     }
   };
 

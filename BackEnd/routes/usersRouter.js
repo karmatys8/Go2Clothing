@@ -21,7 +21,7 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     if (!validator.isEmail(email)) {
-        return res.status(400).json({ error: 'Invalid email address.' });
+        return res.status(422).json({ error: 'Invalid email address.' });
     }
     try {
 
@@ -32,11 +32,12 @@ router.post('/login', async (req, res) => {
             result = await sql.query`SELECT * FROM Users WHERE Email = ${email}`;
             await sql.close();
         } catch (error) {
-            console.error( 'SQL error:', error.message);
+            console.error('SQL error:', error.message);
+            return res.status(500).send('SQL Error: ' + error.message);
         }
 
         if (result.recordset.length === 0) {
-            return res.status(400).json({ error: 'User not found.' });
+            return res.status(404).json({ error: 'User not found.' });
         }
 
         const passwordFromDatabase = result.recordset[0].Password;
@@ -73,15 +74,15 @@ router.post('/register', async (req, res) => {
     const { firstName, lastName, email, password, confirmPassword } = req.body;
 
     if (!validator.isEmail(email)) {
-        return res.status(400).json({ error: 'Invalid email address.' });
+        return res.status(422).json({ error: 'Invalid email address.' });
     }
 
     if (!validateName(firstName) || !validateName(lastName)) {
-        return res.status(400).json({ error: 'Name and Surname cannot be empty or contain numbers.' });
+        return res.status(422).json({ error: 'Name and Surname can neither be empty nor contain numbers.' });
     }
 
     if (password !== confirmPassword) {
-        return res.status(400).json({ error: 'Password and confirmed password must be the same.' });
+        return res.status(422).json({ error: 'Password and confirmed password must be the same.' });
     }
 
 
@@ -93,7 +94,7 @@ router.post('/register', async (req, res) => {
         const result = await sql.query`SELECT TOP 1 * FROM Users WHERE Login = ${email}`;
 
         if (result.recordset.length > 0) {
-            return res.status(400).json({ error: 'An account with this email address already exists.' });
+            return res.status(409).json({ error: 'An account with this email address already exists.' });
         }
 
         const insertion = await sql.query`
@@ -104,7 +105,7 @@ router.post('/register', async (req, res) => {
 
         await sql.close();
 
-        res.status(200).json({ message: 'User registered successfully.' });
+        res.status(201).json({ message: 'User registered successfully.' });
 
     } catch (err) {
         console.error('Database error:', err);

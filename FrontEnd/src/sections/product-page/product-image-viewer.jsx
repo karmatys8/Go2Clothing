@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
+import { enqueueSnackbar } from 'notistack';
 
 import ImageList from '@mui/material/ImageList';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -9,6 +10,8 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 
 import { useResponsive } from 'src/hooks/use-responsive';
+
+import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-error';
 
 // ----------------------------------------------------------------------
 
@@ -42,13 +45,19 @@ export default function ProductImageViewer({ productId, productImages, setProduc
     const fetchProductImages = async () => {
       try {
         const response = await fetch(`http://localhost:3000/products/images/${productId}`);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
         const data = await response.json();
-        setProductImages(data);
+
+        if (response.ok) {
+          setProductImages(data);
+        } else if (response.status === 404) {
+          enqueueSnackbar(`Images for this product could not be found`, { variant: 'error' });
+        } else if (response.status === 500) {
+          enqueueSnackbar(`Failed to fetch product images due to a server error`, {
+            variant: 'error',
+          });
+        } else handleUnexpectedError(data.error, 'while fetching product images');
       } catch (error) {
-        console.error('Error fetching product images:', error);
+        handleNetworkError(error);
       }
     };
 
@@ -87,7 +96,12 @@ export default function ProductImageViewer({ productId, productImages, setProduc
       <Grid xs={0} md={3}>
         {renderImageList}
       </Grid>
-      <Grid alignContent="center" xs={12} md={9} sx={{ position: 'relative', maxWidth: componentHeight }}>
+      <Grid
+        alignContent="center"
+        xs={12}
+        md={9}
+        sx={{ position: 'relative', maxWidth: componentHeight }}
+      >
         <IconButton
           aria-label="Previous image"
           onClick={handlePrevImage}

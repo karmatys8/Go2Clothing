@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { enqueueSnackbar } from 'notistack';
 
 import { Container } from '@mui/material';
 import { Edit, Cancel, Delete } from '@mui/icons-material';
@@ -9,6 +10,8 @@ import {
   GridActionsCellItem,
   GridRowEditStopReasons,
 } from '@mui/x-data-grid';
+
+import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-error';
 
 import EditToolbar from '../edit-toolbar';
 
@@ -28,12 +31,66 @@ export default function ProductsStatsPage() {
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
   };
 
-  const handleSaveClick = (id) => () => {
+  const handleSaveClick = async (id) => async () => {
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+
+    const product = rows.find((item) => item.id === id);
+    try {
+      const response = await fetch(`http://localhost:3000/admin/addProduct`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: {
+          ProductName: product.name,
+          CategoryName: product.category,
+          UnitPrice: product.price,
+          Discount: product.discount,
+          UnitsInStock: product.inStock,
+          Color: product.color,
+          Size: product.size,
+        },
+      });
+
+      if (response.ok) {
+        enqueueSnackbar(`Successfully added product with id:${id}`, { variant: 'success' });
+      } else if (response.status === 500) {
+        enqueueSnackbar(`Failed to add product with id:${id} due to a server error`, {
+          variant: 'error',
+        });
+      } else {
+        const data = await response.json();
+        handleUnexpectedError(data.error, 'while adding product');
+      }
+    } catch (error) {
+      handleNetworkError(error);
+    }
   };
 
-  const handleDeleteClick = (id) => () => {
+  const handleDeleteClick = async (id) => async () => {
     setRows(rows.filter((row) => row.id !== id));
+
+    try {
+      const response = await fetch(`http://localhost:3000/admin/deleteProduct/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        enqueueSnackbar(`Delete of product with id:${id} successful`, { variant: 'success' });
+      } else if (response.status === 500) {
+        enqueueSnackbar(`Failed to delete product with id:${id} due to a server error`, {
+          variant: 'error',
+        });
+      } else {
+        const data = await response.json();
+        handleUnexpectedError(data.error, 'while deleting product');
+      }
+    } catch (error) {
+      handleNetworkError(error);
+    }
   };
 
   const handleCancelClick = (id) => () => {
@@ -60,13 +117,17 @@ export default function ProductsStatsPage() {
         },
         body: JSON.stringify(updatedRow),
       });
+
       if (response.ok) {
-        console.log('Edited Successfully');
+        enqueueSnackbar('Edited Successfully');
+      } else if (response.status === 500) {
+        enqueueSnackbar(`Failed to update product due to a server error`, { variant: 'error' });
       } else {
-        console.error('Failed to edit:', response.status, response.statusText);
+        const data = await response.json();
+        handleUnexpectedError(data.error, 'while updating product');
       }
     } catch (error) {
-      console.error('Network error:', error.message);
+      handleNetworkError(error);
     }
 
     return updatedRow;
@@ -185,12 +246,15 @@ export default function ProductsStatsPage() {
     const fetchData = async () => {
       try {
         const response = await fetch('http://localhost:3000/admin/products');
+        const data = await response.json();
+
         if (response.ok) {
-          const data = await response.json();
           setRows(data);
-        }
+        } else if (response.status === 500) {
+          enqueueSnackbar(`Failed to fetch data`, { variant: 'error' });
+        } else handleUnexpectedError(data.error, 'while fetching products');
       } catch (error) {
-        console.error('Products fetching error: ', error);
+        handleNetworkError(error);
       }
     };
 

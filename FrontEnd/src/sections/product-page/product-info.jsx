@@ -1,11 +1,14 @@
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
+import { enqueueSnackbar } from 'notistack';
 
 import Accordion from '@mui/material/Accordion';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
+
+import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-error';
 
 // ----------------------------------------------------------------------
 
@@ -18,9 +21,18 @@ export default function ProductInfo({ productId }) {
       try {
         const response = await fetch(`http://localhost:3000/products/description/${productId}`);
         const data = await response.json();
-        setProductDescription(data.ProductDescription);
+
+        if (response.ok) {
+          setProductDescription(data.ProductDescription);
+        } else if (response.status === 404) {
+          enqueueSnackbar(`Description for this product could not be found`, { variant: 'error' });
+        } else if (response.status === 500) {
+          enqueueSnackbar(`Failed to fetch product description due to a server error`, {
+            variant: 'error',
+          });
+        } else handleUnexpectedError(data.error, "while fetching product description");
       } catch (error) {
-        console.error('Error while fetching description:', error);
+        handleNetworkError(error);
       }
     };
 
