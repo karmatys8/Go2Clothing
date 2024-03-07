@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
 
 import { Link } from '@mui/material';
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
+
+import { RouterLink } from 'src/routes/components';
 
 import { useCartContext } from 'src/contexts/use-cart-context';
 
@@ -44,7 +45,7 @@ export default function CartWidget() {
 
   return (
     <StyledRoot>
-      <Link component={RouterLink} to="/cart" sx={{ color: 'inherit' }}>
+      <Link component={RouterLink} href="/cart" sx={{ color: 'inherit' }}>
         <Badge showZero badgeContent={itemsAmount} color="error" max={99}>
           <Iconify icon="eva:shopping-cart-fill" width={24} height={24} />
         </Badge>

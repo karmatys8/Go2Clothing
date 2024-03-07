@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -45,35 +46,45 @@ export default function ShopProductCard({ product }) {
   );
 
   return (
-    <Card>
-      <Box sx={{ pt: '100%', position: 'relative' }}>
-        {product.status && renderStatus}
+    <Link to={`/product-page/${product.id}`} style={{ textDecoration: 'none' }}>
+      <Card>
+        <Box sx={{ pt: '100%', position: 'relative' }}>
+          {product.status && renderStatus}
 
-        {renderImg}
-      </Box>
+          {renderImg}
+        </Box>
 
-      <Stack spacing={2} sx={{ p: 3 }}>
-        <Typography
-          variant="subtitle2"
-          noWrap
-          sx={{
-            '&:hover': {
-              textDecoration: 'underline',
-            },
-          }}
-        >
-          {product.name}
-        </Typography>
+        <Stack spacing={2} sx={{ p: 3 }}>
+          <Typography
+            variant="subtitle2"
+            noWrap
+            sx={{
+              '&:hover': {
+                textDecoration: 'underline',
+              },
+            }}
+          >
+            {product.name}
+          </Typography>
 
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <ColorPreview colors={product.colors} />
-          <PriceComponent saleProductPrice={product.priceSale} productPrice={product.price} />
+          <Stack direction="row" alignItems="center" justifyContent="space-between">
+            <ColorPreview colors={product.colors} />
+            <PriceComponent saleProductPrice={product.priceSale} productPrice={product.price} />
+          </Stack>
         </Stack>
-      </Stack>
-    </Card>
+      </Card>
+    </Link>
   );
 }
 
 ShopProductCard.propTypes = {
-  product: PropTypes.object,
+  product: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    cover: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    priceSale: PropTypes.number,
+    colors: PropTypes.arrayOf(PropTypes.string).isRequired,
+    status: PropTypes.string,
+  }),
 };

@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { enqueueSnackbar } from 'notistack';
 
@@ -77,9 +76,7 @@ export default function ProductsView() {
       <Grid container spacing={3}>
         {products.map((product) => (
           <Grid key={product.id} xs={12} sm={6} md={3}>
-            <Link to={`/product-page/${product.id}`} style={{ textDecoration: 'none' }}>
-              <ProductCard product={product} />
-            </Link>
+            <ProductCard product={product} />
           </Grid>
         ))}
       </Grid>

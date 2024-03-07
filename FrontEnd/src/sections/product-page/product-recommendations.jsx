@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Carousel from 'react-multi-carousel';
 import { enqueueSnackbar } from 'notistack';
@@ -65,9 +64,7 @@ export default function ProductRecommendations({ productId }) {
       <Carousel responsive={responsive}>
         {products.map((product) => (
           <div style={{ marginInline: 12 }} key={product.id}>
-            <Link to={`/product-page/${product.id}`} style={{ textDecoration: 'none' }}>
-              <ProductCard product={product} />
-            </Link>
+            <ProductCard product={product} />
           </div>
         ))}
       </Carousel>

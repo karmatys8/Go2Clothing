@@ -18,19 +18,16 @@ export default function CartSummary() {
   const { userData } = useUserContext();
   const { cartData } = useCartContext();
 
-  const [totalPrice, setTotalPrice] = useState(0);
+  const totalPrice = cartData.reduce(
+    (acc, item) => acc + (item.salePrice || item.price) * item.amount,
+    0
+  );
   const [shippingPrice, setShippingPrice] = useState(0);
   const freeShippingThreshold = 500;
 
   useEffect(() => {
     setShippingPrice(!cartData.length || totalPrice >= freeShippingThreshold ? 0 : 100);
   }, [totalPrice, cartData]);
-
-  useEffect(() => {
-    setTotalPrice(
-      cartData.reduce((acc, item) => acc + (item.salePrice || item.price) * item.amount, 0)
-    );
-  }, [cartData]);
 
   const handleCheckout = async () => {
     try {

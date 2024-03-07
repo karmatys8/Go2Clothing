@@ -1,30 +1,24 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
 import { useDebouncedCallback } from 'use-debounce';
 
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { alpha, useTheme } from '@mui/material/styles';
 
 import { useRouter } from 'src/routes/hooks';
 
 import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-error';
 
-import { bgGradient } from 'src/theme/css';
-
-import Logo from 'src/components/logo';
 import EmailTextField from 'src/components/email-text-field';
+import StyledForm from 'src/components/styled-form/styled-form';
 import PasswordTextField from 'src/components/password-text-field';
+
 // ----------------------------------------------------------------------
 
 export default function RegisterView() {
-  const theme = useTheme();
-
   const router = useRouter();
   const [nameData, setNameData] = useState({ firstName: '', lastName: '' });
 
@@ -32,10 +26,11 @@ export default function RegisterView() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const [arePasswordsEqual, setArePasswordEqual] = useState(true);
+  const [arePasswordsEqual, setArePasswordsEqual] = useState(true);
+  const [isRequestPending, setIsRequestPending] = useState(false);
 
   const debounce = useDebouncedCallback(() => {
-    setArePasswordEqual(password === confirmPassword);
+    setArePasswordsEqual(password === confirmPassword);
   }, 500);
 
   const handleNameChange = (event) => {
@@ -48,6 +43,7 @@ export default function RegisterView() {
 
   const register = async (event) => {
     event.preventDefault();
+    setIsRequestPending(true);
 
     try {
       const response = await fetch('http://localhost:3000/users/register', {
@@ -63,7 +59,9 @@ export default function RegisterView() {
         enqueueSnackbar('Register successful', { variant: 'success' });
       } else handleError(response);
     } catch (error) {
-      handleNetworkError();
+      handleNetworkError(error);
+    } finally {
+      setIsRequestPending(false);
     }
   };
 
@@ -106,6 +104,7 @@ export default function RegisterView() {
       </Stack>
 
       <LoadingButton
+        loading={isRequestPending}
         fullWidth
         size="large"
         type="submit"
@@ -119,40 +118,14 @@ export default function RegisterView() {
   );
 
   return (
-    <Box
-      sx={{
-        ...bgGradient({
-          color: alpha(theme.palette.background.default, 0.9),
-          imgUrl: '/assets/background/overlay_4.jpg',
-        }),
-        height: 1,
-      }}
-    >
-      <Logo
-        sx={{
-          position: 'fixed',
-          top: { xs: 16, md: 24 },
-          left: { xs: 16, md: 24 },
-        }}
-      />
+    <StyledForm>
+      <Typography variant="h4" sx={{ mb: 5 }}>
+        Register to Minimal
+      </Typography>
 
-      <Stack alignItems="center" justifyContent="center" sx={{ height: 1 }}>
-        <Card
-          sx={{
-            p: 5,
-            width: 1,
-            maxWidth: 420,
-          }}
-        >
-          <Typography variant="h4" sx={{ mb: 5 }}>
-            Register to Minimal
-          </Typography>
+      <Divider sx={{ my: 3 }} />
 
-          <Divider sx={{ my: 3 }} />
-
-          {renderForm}
-        </Card>
-      </Stack>
-    </Box>
+      {renderForm}
+    </StyledForm>
   );
 }
