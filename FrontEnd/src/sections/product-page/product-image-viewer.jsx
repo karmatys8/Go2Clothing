@@ -11,7 +11,7 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
-import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-error';
+import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-errors';
 
 // ----------------------------------------------------------------------
 

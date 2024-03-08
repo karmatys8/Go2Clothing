@@ -6,7 +6,7 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 
-import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-error';
+import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-errors';
 
 import ProductCard from 'src/components/product-card';
 

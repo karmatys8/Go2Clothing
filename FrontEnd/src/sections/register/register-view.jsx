@@ -10,7 +10,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 
 import { useRouter } from 'src/routes/hooks';
 
-import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-error';
+import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-errors';
 
 import EmailTextField from 'src/components/email-text-field';
 import StyledForm from 'src/components/styled-form/styled-form';

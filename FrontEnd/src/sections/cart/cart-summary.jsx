@@ -5,7 +5,7 @@ import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import { Alert, Button, Typography } from '@mui/material';
 import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
 
-import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-error';
+import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-errors';
 
 import { useCartContext } from 'src/contexts/use-cart-context';
 import { useUserContext } from 'src/contexts/use-user-context';

@@ -11,7 +11,7 @@ import {
   GridRowEditStopReasons,
 } from '@mui/x-data-grid';
 
-import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-error';
+import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-errors';
 
 import EditToolbar from '../edit-toolbar';
 

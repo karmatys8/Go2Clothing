@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@mui/material';
 import { GridAddIcon, GridRowModes, GridToolbarContainer } from '@mui/x-data-grid';
 
-import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-error';
+import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-errors';
 
 // ----------------------------------------------------------------------
 

@@ -1,5 +1,5 @@
+import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
 import { enqueueSnackbar } from 'notistack';
 
 import Box from '@mui/material/Box';
@@ -13,12 +13,14 @@ import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 
-import { handleUnexpectedError } from 'src/utils/handle-common-error';
-
 import { useCartContext } from 'src/contexts/use-cart-context';
 import PriceComponent from 'src/layouts/dashboard/common/price';
 
 import StickyComponent from 'src/components/sticky-grid';
+
+import { useSizeData } from './hooks/use-size-data';
+import { useColorData } from './hooks/use-color-data';
+import { useProductDetails } from './hooks/use-product-details';
 
 // ----------------------------------------------------------------------
 
@@ -26,94 +28,18 @@ export default function ProductPersonalization({ productId, labelImage }) {
   const { cartData, setCartData } = useCartContext();
   const [selectedColor, setSelectedColor] = useState('');
   const [selectedSizes, setSelectedSizes] = useState('');
-  const [seizesData, setSeizesData] = useState([]);
-  const [colorData, setColorData] = useState([]);
-  const [productName, setProductName] = useState('');
-  const [productPrice, setProductPrice] = useState(0.0);
-  const [saleProductPrice, setSaleProductPrice] = useState(0.0);
-
-  useEffect(() => {
-    const fetchSizesData = async () => {
-      const category = 'Size';
-
-      try {
-        const response = await fetch(`http://localhost:3000/products/size/${productId}`);
-
-        const data = await response.json();
-        if (response.ok) {
-          setSeizesData(data);
-        } else handleFetchError(response, data, category);
-      } catch (error) {
-        handleFetchNetworkError(error, category);
-      }
-    };
-
-    fetchSizesData();
-  }, [productId]);
-
-  useEffect(() => {
-    const fetchColorData = async () => {
-      const category = 'Color';
-
-      try {
-        const response = await fetch(`http://localhost:3000/products/colors/${productId}`);
-
-        const data = await response.json();
-        if (response.ok) {
-          setColorData(data);
-        } else handleFetchError(response, data, category);
-      } catch (error) {
-        handleFetchNetworkError(error, category);
-      }
-    };
-
-    fetchColorData();
-  }, [productId]);
-
-  useEffect(() => {
-    const fetchDetails = async () => {
-      const category = 'Details';
-
-      try {
-        const response = await fetch(`http://localhost:3000/products/details/${productId}`);
-
-        const data = await response.json();
-        if (response.ok) {
-          setProductName(data.ProductName);
-          setProductPrice(data.ProductPrice);
-          setSaleProductPrice(data.SalePrice);
-        } else handleFetchError(response, data, category);
-      } catch (error) {
-        handleFetchNetworkError(error, category);
-      }
-    };
-
-    fetchDetails();
-  }, [productId, productName, productPrice]);
-
-  const handleFetchError = (response, data, category) => {
-    if (response.status === 404) {
-      enqueueSnackbar(`${category} data does not exist for this product`, { variant: 'error' });
-    } else if (response.status === 500) {
-      enqueueSnackbar(`Failed to fetch ${category} data due to a server error`, {
-        variant: 'error',
-      });
-    } else handleUnexpectedError(data.error, `while fetching ${category}`)
-  };
-
-  function handleFetchNetworkError(error, category) {
-    console.error(`Network error: ${error.message}`);
-    enqueueSnackbar(`Failed to load resources for ${category}`, { variant: 'error' });
-  }
+  const sizesData = useSizeData(productId);
+  const colorData = useColorData(productId);
+  const productDetails = useProductDetails(productId);
 
   const handleAddToCart = () => {
     const product = {
       id: productId,
-      name: productName,
+      name: productDetails.name,
       color: selectedColor,
       size: selectedSizes,
-      price: productPrice,
-      salePrice: saleProductPrice,
+      price: productDetails.price,
+      salePrice: productDetails.salePrice,
       amount: 1,
       img: labelImage,
     };
@@ -199,7 +125,7 @@ export default function ProductPersonalization({ productId, labelImage }) {
             },
           }}
         >
-          {seizesData.map((seize) => (
+          {sizesData.map((seize) => (
             <MenuItem value={seize} key={seize}>
               {seize}
             </MenuItem>
@@ -213,12 +139,12 @@ export default function ProductPersonalization({ productId, labelImage }) {
     <StickyComponent top={17.5} generalStyles={{ pb: 5 }} wideScreenStyles={{ pl: 10 }}>
       <Grid xs={12}>
         <Typography variant="h4" component="h2" sx={{ mb: 0.5 }}>
-          {productName}
+          {productDetails.name}
         </Typography>
       </Grid>
       <Grid xs={12}>
         <Typography variant="h6" component="span" sx={{ mb: 3 }}>
-          <PriceComponent saleProductPrice={saleProductPrice} productPrice={productPrice} />
+          <PriceComponent saleProductPrice={productDetails.salePrice} productPrice={productDetails.price} />
         </Typography>
       </Grid>
       <Grid xs={12} sx={{ mb: 2.5 }} flex justifyContent="center">

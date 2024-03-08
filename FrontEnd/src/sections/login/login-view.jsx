@@ -12,7 +12,7 @@ import { alpha, useTheme } from '@mui/material/styles';
 import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 
-import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-error';
+import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-errors';
 
 import { useUserContext } from 'src/contexts/use-user-context';
 

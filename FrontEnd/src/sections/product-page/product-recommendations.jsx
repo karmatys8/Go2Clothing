@@ -7,7 +7,7 @@ import 'react-multi-carousel/lib/styles.css';
 import Box from '@mui/material/Box';
 import { useTheme, Typography } from '@mui/material';
 
-import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-error';
+import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-errors';
 
 import ProductCard from 'src/components/product-card';
 
