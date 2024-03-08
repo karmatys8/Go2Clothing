@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Navigate } from 'react-router-dom';
+import { enqueueSnackbar } from 'notistack';
 
 import { useUserContext } from 'src/contexts/use-user-context';
 
@@ -9,14 +10,18 @@ import { useUserContext } from 'src/contexts/use-user-context';
 const PrivateComponent = ({ component: Component, allowedRoles }) => {
   const { userData } = useUserContext();
 
-  const redirectComponent = allowedRoles.includes(userData?.role) ? (
-    Component
-  ) : (
-    <Navigate to="/" replace />
-  );
+  // If user is not logged in, go to login page
+  if (!userData?.role) {
+    enqueueSnackbar('You need to login to access this page.', { variant: 'info' });
+    return <Navigate to="/login" />;
+  }
 
-  // if user is not logged in go to login page
-  return userData?.role ? redirectComponent : <Navigate to="/login" />;
+  if (!allowedRoles.includes(userData.role)) {
+    enqueueSnackbar('You are not authorized to access this page.', { variant: 'info' });
+    return <Navigate to="/" replace />;
+  }
+
+  return Component;
 };
 
 export default PrivateComponent;

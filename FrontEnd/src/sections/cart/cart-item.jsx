@@ -8,6 +8,8 @@ import Typography from '@mui/material/Typography';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, TextField, FormControl } from '@mui/material';
 
+import { RouterLink } from 'src/routes/components';
+
 import { useResponsive } from 'src/hooks/use-responsive';
 
 import { useCartContext } from 'src/contexts/use-cart-context';
@@ -79,7 +81,14 @@ export default function CartItem({ product }) {
 
           <Stack justifyContent="space-between" overflow="hidden" spacing={2} sx={{ p: 2 }}>
             <Box>
-              <Link color="inherit" underline="hover" variant="subtitle1" noWrap>
+              <Link
+                component={RouterLink}
+                href={`/product-page/${product.id}`}
+                color="inherit"
+                underline="hover"
+                variant="subtitle1"
+                noWrap
+              >
                 {product.name}
               </Link>
               <Typography variant="body2" noWrap>

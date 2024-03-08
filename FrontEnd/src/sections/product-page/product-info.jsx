@@ -8,7 +8,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 
-import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-error';
+import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-errors';
 
 // ----------------------------------------------------------------------
 
@@ -30,7 +30,7 @@ export default function ProductInfo({ productId }) {
           enqueueSnackbar(`Failed to fetch product description due to a server error`, {
             variant: 'error',
           });
-        } else handleUnexpectedError(data.error, "while fetching product description");
+        } else handleUnexpectedError(data.error, 'while fetching product description');
       } catch (error) {
         handleNetworkError(error);
       }

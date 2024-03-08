@@ -4,6 +4,8 @@ const sql = require('mssql');
 const dbConfig = require("./db");
 const cors = require("cors");
 
+const { sortSizes } = require('../util/sortSizes');
+
 
 router.use(cors());
 
@@ -125,6 +127,7 @@ router.get('/size/:id',async (req, res) => {
             return res.status(404).json({ error: 'Product not found.' });
         }
         const sizes = result.recordset.map(record => record.Size.trim());
+        sortSizes(sizes);
 
         res.status(200).json(sizes);
     } catch (err) {

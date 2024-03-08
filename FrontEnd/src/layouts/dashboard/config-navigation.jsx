@@ -19,12 +19,6 @@ const navConfig = [
     role: 'all',
   },
   {
-    title: 'products-stats',
-    path: '/products-stats',
-    icon: icon('ic_user'),
-    role: ['admin'],
-  },
-  {
     title: 'orders-stats',
     path: '/orders-stats',
     icon: icon('ic_analytics'),

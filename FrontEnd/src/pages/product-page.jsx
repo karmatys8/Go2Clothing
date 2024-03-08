@@ -8,7 +8,7 @@ export default function SingleProductPage() {
   return (
     <>
       <Helmet>
-        <title> Product page | Minimal UI </title>
+        <title> Product page | Go2Clothes </title>
       </Helmet>
 
       <SingleProductView />

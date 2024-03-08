@@ -8,7 +8,7 @@ export default function LoginPage() {
   return (
     <>
       <Helmet>
-        <title> Register | Minimal UI </title>
+        <title> Register | Go2Clothes </title>
       </Helmet>
 
       <RegisterView />

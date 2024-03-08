@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
-import { Link as RouterLink } from 'react-router-dom';
 
-import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
-import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
@@ -13,15 +10,15 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import { useRouter } from 'src/routes/hooks';
+import { RouterLink } from 'src/routes/components';
 
-import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-error';
+import { handleNetworkError, handleUnexpectedError } from 'src/utils/handle-common-errors';
 
-import { bgGradient } from 'src/theme/css';
 import { useUserContext } from 'src/contexts/use-user-context';
 
-import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 import EmailTextField from 'src/components/email-text-field';
+import StyledForm from 'src/components/styled-form/styled-form';
 import PasswordTextField from 'src/components/password-text-field';
 
 // ----------------------------------------------------------------------
@@ -34,9 +31,11 @@ export default function LoginView() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isRequestPending, setIsRequestPending] = useState(false);
 
   const login = async (event) => {
     event.preventDefault();
+    setIsRequestPending(true);
 
     try {
       const response = await fetch('http://localhost:3000/users/login', {
@@ -52,6 +51,8 @@ export default function LoginView() {
       } else handleError(response, data);
     } catch (error) {
       handleNetworkError(error);
+    } finally {
+      setIsRequestPending(false);
     }
   };
 
@@ -75,6 +76,40 @@ export default function LoginView() {
     } else handleUnexpectedError(data.error, 'while logging in');
   };
 
+  const renderQuickLogin = (
+    <Stack direction="row" spacing={2}>
+      <Button
+        fullWidth
+        size="large"
+        color="inherit"
+        variant="outlined"
+        sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
+      >
+        <Iconify icon="eva:google-fill" color="#DF3E30" />
+      </Button>
+
+      <Button
+        fullWidth
+        size="large"
+        color="inherit"
+        variant="outlined"
+        sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
+      >
+        <Iconify icon="eva:facebook-fill" color="#1877F2" />
+      </Button>
+
+      <Button
+        fullWidth
+        size="large"
+        color="inherit"
+        variant="outlined"
+        sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
+      >
+        <Iconify icon="eva:twitter-fill" color="#1C9CEA" />
+      </Button>
+    </Stack>
+  );
+
   const renderForm = (
     <form onSubmit={login}>
       <Stack spacing={3}>
@@ -83,93 +118,44 @@ export default function LoginView() {
       </Stack>
 
       <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ my: 3 }}>
-        <Link variant="subtitle2" underline="hover">
+        <Link component={RouterLink} variant="subtitle2" underline="hover">
           Forgot password?
         </Link>
       </Stack>
 
-      <LoadingButton fullWidth size="large" type="submit" variant="contained" color="inherit">
+      <LoadingButton
+        loading={isRequestPending}
+        fullWidth
+        size="large"
+        type="submit"
+        variant="contained"
+        color="inherit"
+      >
         Login
       </LoadingButton>
     </form>
   );
 
   return (
-    <Box
-      sx={{
-        ...bgGradient({
-          color: alpha(theme.palette.background.default, 0.9),
-          imgUrl: '/assets/background/overlay_4.jpg',
-        }),
-        height: 1,
-      }}
-    >
-      <Logo
-        sx={{
-          position: 'fixed',
-          top: { xs: 16, md: 24 },
-          left: { xs: 16, md: 24 },
-        }}
-      />
+    <StyledForm>
+      <Typography variant="h4">Sign in to Go2Clothes</Typography>
 
-      <Stack alignItems="center" justifyContent="center" sx={{ height: 1 }}>
-        <Card
-          sx={{
-            p: 5,
-            width: 1,
-            maxWidth: 420,
-          }}
-        >
-          <Typography variant="h4">Sign in to Minimal</Typography>
+      <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
+        Don’t have an account?
+        <Link component={RouterLink} href="/register" variant="subtitle2" sx={{ ml: 0.5 }}>
+          Get started
+        </Link>
+      </Typography>
 
-          <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
-            Don’t have an account?
-            <Link component={RouterLink} variant="subtitle2" sx={{ ml: 0.5 }} to="/register">
-              Get started
-            </Link>
-          </Typography>
+      {renderQuickLogin}
 
-          <Stack direction="row" spacing={2}>
-            <Button
-              fullWidth
-              size="large"
-              color="inherit"
-              variant="outlined"
-              sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
-            >
-              <Iconify icon="eva:google-fill" color="#DF3E30" />
-            </Button>
+      <Divider sx={{ my: 3 }}>
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          OR
+        </Typography>
+      </Divider>
 
-            <Button
-              fullWidth
-              size="large"
-              color="inherit"
-              variant="outlined"
-              sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
-            >
-              <Iconify icon="eva:facebook-fill" color="#1877F2" />
-            </Button>
-
-            <Button
-              fullWidth
-              size="large"
-              color="inherit"
-              variant="outlined"
-              sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
-            >
-              <Iconify icon="eva:twitter-fill" color="#1C9CEA" />
-            </Button>
-          </Stack>
-
-          <Divider sx={{ my: 3 }}>
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              OR
-            </Typography>
-          </Divider>
-
-          {renderForm}
-        </Card>
-      </Stack>
-    </Box>
+      {renderForm}
+    </StyledForm>
   );
 }
