@@ -6,7 +6,6 @@ var logger = require('morgan');
 const bodyParser = require('body-parser');
 
 var indexRouter = require('./routes/indexRouter');
-var adminsRouter = require('./routes/adminsRouter');
 var productsRouter = require('./routes/productsRouter');
 var usersRouter = require('./routes/usersRouter');
 var customerRouter = require('./routes/customerRouter');
@@ -26,7 +25,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/', indexRouter);
-app.use('/admin', adminsRouter);
 app.use('/products', productsRouter);
 app.use('/users', usersRouter);
 app.use('/customer', customerRouter);
