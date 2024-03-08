@@ -8,7 +8,7 @@ export default function ProductsStatsPage() {
   return (
     <>
       <Helmet>
-        <title> Products Stats | Minimal UI </title>
+        <title> Products Stats | Go2Clothes </title>
       </Helmet>
 
       <ProductsStatsView />

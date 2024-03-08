@@ -8,7 +8,7 @@ export default function OrdersStatsPage() {
   return (
     <>
       <Helmet>
-        <title> Orders Stats | Minimal UI </title>
+        <title> Orders Stats | Go2Clothes </title>
       </Helmet>
 
       <OrdersStatsView />

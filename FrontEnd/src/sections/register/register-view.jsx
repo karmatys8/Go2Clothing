@@ -120,7 +120,7 @@ export default function RegisterView() {
   return (
     <StyledForm>
       <Typography variant="h4" sx={{ mb: 5 }}>
-        Register to Minimal
+        Register to Go2Clothes
       </Typography>
 
       <Divider sx={{ my: 3 }} />

@@ -138,7 +138,7 @@ export default function LoginView() {
 
   return (
     <StyledForm>
-      <Typography variant="h4">Sign in to Minimal</Typography>
+      <Typography variant="h4">Sign in to Go2Clothes</Typography>
 
       <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
         Don’t have an account?

@@ -1,8 +1,7 @@
 {
-  "name": "@minimal/material-kit-react",
-  "author": "minimals.cc",
+  "name": "go2clothes",
   "licence": "MIT",
-  "version": "1.8.0",
+  "version": "1.0.0",
   "private": false,
   "scripts": {
     "dev": "vite",
